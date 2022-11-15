@@ -88,6 +88,9 @@ $$ --required or $aText$
 --start db postgres by specifuing the data directory. good practive to log every command for trousbleshooting purpose
 postgres -D /usr/local/pgsql/data > logfile
 pg_ctl start -l logfile
+SELECT  pg_current_logfile(); -- https://stackoverflow.com/questions/67924176/where-are-the-postgres-logs
+SHOW logging_collector; --log started? ie ON
+SHOW log_directory; -- where is log
 
 -- activities
 select pid, client_addr, datname, application_name, query 
@@ -137,6 +140,8 @@ where routine_definition like '%MYSTRING%' or  --routines(function, proc)
 SELECT trigger_catalog, trigger_name, trigger_catalog, event_manipulation, 
 event_object_catalog, event_object_schema, event_object_table,* 
 FROM information_schema.triggers
+
+
 
 -- proc definition
 select pg_catalog.pg_get_functiondef('copy_remit_service_lines'::regproc::oid); 
@@ -191,6 +196,14 @@ CREATE TRIGGER sensor_trig
 -- pg_stat_activity
 
 
+--dependencies
+--*****pg_class  : contains anything similar to table
+--*****pg_attrdef: stores column default values. 
+SELECT p.relname, a.adsrc FROM pg_class p
+       JOIN pg_attrdef a ON (p.relfilenode = a.adrelid)
+       WHERE a.adsrc ~ 'merchantbatch_id_seq';
+
+
 PostgreSQL, users are referred to as login roles,
 
 A login role is a role that has been assigned the CONNECT privilege.
@@ -199,11 +212,38 @@ each connection can have
 	one active transaction at a time and 
 	one fully active statement at any time.
 	
-	SELECT current_database();
+	SELECT current_database(), ;
 	SELECT inet_server_addr(), inet_server_port();
 	SELECT version();
+	select current_user, session_user, current_role;
 	
 -- roles
-create view role_routine_grants (grantor, grantee, specific_catalog, specific_schema, specific_name, routine_catalog, routine_schema,routine_name, privilege_type, is_grantable)
+create view role_routine_grants 
+ (grantor, grantee, specific_catalog, specific_schema, specific_name, routine_catalog, 
+routine_schema,routine_name, privilege_type, is_grantable)
 	SELECT * FROM information_schema.role_routine_grants
-    SELECT * FROM information_schema.table_privileges 	
+    SELECT * FROM information_schema.table_privileges where grantee = 'dba'	
+	alter role mbello with superuser
+	alter role mbello with nosuperuser -- superuser, password, createdb, createrole, inherit, login, nologin...
+	SELECT * FROM pg_authid /*pg_roles*/ WHERE rolname = 'luca'
+	SELECT r.rolname, g.rolname AS group, m.admin_option AS is_admin
+          FROM pg_auth_members m
+               JOIN pg_roles r ON r.oid = m.member
+               JOIN pg_roles g ON g.oid = m.roleid
+		  WHERE  r.rolname = 'mbello'	   
+          ORDER BY r.rolname;
+	execute as login 	  . set role to mbello
+	
+--command  --https://www.geeksforgeeks.org/postgresql-psql-commands/
+psql --host=localhost --dbname=postgres --username=postgres --to connect -W have you enter password
+psql -U a_user -- will connect to a_user db
+\l availale databases
+\c change db
+\a aligned/non aligned column output
+\x expanded display on/off
+\du or du+ user privilege --+will give more columns - user may have some priv hidden in "information_schema.table_privileges"
+\dt table description	
+\dv list view
+-- permission and role as Access Control Lists (ACLs) with this format grantee=flags/grantor
+-- https://www.postgresql.org/docs/current/ddl-priv.html
+\dp or \z table privilege 
