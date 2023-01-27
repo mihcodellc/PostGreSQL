@@ -1,4 +1,36 @@
-﻿Amazon rds, 
+﻿ 1986 Postgres or Post-Ingres by Michael Stonebraker to Postgre95 to PostgreSQL
+ 4 billion individual databases
+ 1 billion tables, each containing 32 TB of data
+ 1,600 columns, each 1 GB in size, with an unlimited number of multi-column (up to 32 columns) indexes.
+ with other embedded languages, such as Perl, Python, Java, and even Bash!
+ support and upgrades for 5 years after a new release is issued;
+ 
+  A PostgreSQL instance is called a cluster because a single instance can serve and handle multiple databases. 
+  Every database is an ISOLATED space where users and applications can store data
+ 
+  PostgreSQL stores all of its content
+  (user data and internal status) in a single filesystem directory known as PGDATA
+  
+  PGDATA directory is made by at least the 
+	- write-ahead (intent) logs (WALs) and the 
+	- data storage. 
+	Without either of those two parts, the cluster is unable to guarantee data consistency and, in some critical circumstances, even start.
+  
+  PostgreSQL relies on the underlying filesystem to implement persistence, and 
+  therefore tuning the filesystem is an important task in order to make PostgreSQL perform well
+  
+PostgreSQL catalog is much more accurate and 
+	PostgreSQL-specific that the general information schema compared to information schema
+	
+postmaster: When the cluster is started, a single process called the postmaster is launched	
+backend: every time a new connection against the cluster is opened, the cluster reacts by launching 
+	a new backend process to serve it until the connection ends
+
+contrib package: is a set of well-known extensions and utilities that can enhance your PostgreSQL experience	
+ 
+Installing PostgreSQL via pgenv for mutilversion environement on same machine 
+ 
+Amazon rds, 
 Amazon RedShift,
 Aurora PostgreSQL 
 	are PostgreSQL variants
@@ -85,12 +117,29 @@ $$ --required or $aText$
 
 
 *************ADMIN
+Ubuntu/debian
+pg_lsclusters - show information about all PostgreSQL clusters
+	pgrep -a post # version looking at the postmaster process
+pg_ctlcluster ie pg_ctl for ubuntu, tool that allows you to perform different actions on a cluster
+pg_lsclusters -s # Include start.conf information in status column.
+
+sudo service postgresql start
+sudo pg_ctlcluster stop -m smart # smart or fast or immediate 
+sudo pg_ctlcluster 12 main status
+
+
 --start db postgres by specifuing the data directory. good practive to log every command for trousbleshooting purpose
 postgres -D /usr/local/pgsql/data > logfile
 pg_ctl start -l logfile
 SELECT  pg_current_logfile(); -- https://stackoverflow.com/questions/67924176/where-are-the-postgres-logs
 SHOW logging_collector; --log started? ie ON
 SHOW log_directory; -- where is log
+
+
+--memory cpu, ....
+htop -u mbello
+htop -p 70 #-p ie pid
+htop -s CPU # sort
 
 -- activities
 select pid, client_addr, datname, application_name, query 
@@ -105,20 +154,32 @@ FROM pg_locks
 limit 5;
  
 
---table size
-select pg_size_pretty(pg_relation_size('accountnumber'));
+--table size and index size
+select pg_size_pretty(pg_relation_size('accountnumber')) AS table_size, 
+	   pg_size_pretty( pg_relation_size( 'idx_posts_date' ) ) AS index_size
 
 select pg_size_pretty(pg_database_size('prod1'));
 --db and size
 select datname, datdba,pg_size_pretty(pg_database_size(datname))
 from pg_database;
 
---describe table
+-- auto-explain(an extension) triggers when a running query is slower than a specified threshold, and then dumps in the PostgreSQL logs
+-- database administrator can get an insight into slow queries and their execution plan
+-- config auto explain in postgresql.conf
+session_preload_libraries = 'auto_explain'
+auto_explain.log_min_duration = '500ms'
+auto_explain.log_analyze = on -- ie  perform EXPLAIN ANALYZE
+auto_explain.log_format(json) 
+-- to query the LOG
+sudo tail -f /postgres/12/log/postgresql.log
+--describe table EXPLAIN ie no output rows
 EXPLAIN ANALYZE select * from information_schema.columns
 where table_name = 'accountnumber' limit 1;
 	EXPLAIN = estimate plan
 	EXPLAIN ANALYZE = Actual plan
-	EXPLAIN (ANALYZE, BUFFERS)
+	EXPLAIN (ANALYZE, BUFFERS, COSTS, FORMAT TEXT) -- TEXT, XML, JSON, or YAML
+	EXPLAIN (COSTS off) -- off/on works for ANALYZE, BUFFERS, TIMING ...
+	 EXPLAIN (ANALYZE, SUMMARY on) SELECT * FROM categories; -- return Planning Time/ Execution Time
 		disk IO
 	EXPLAIN (ANALYZE, BUFFERS, VERBOSE) 
 	visual
@@ -130,11 +191,14 @@ where table_name = 'accountnumber' limit 1;
 
 SELECT * FROM pg_class WHERE relname = 'claim_data' -- relation ie class or plsql "\d schema.claim_data" or "\d+ schema.claim_data"
 Select table_name, columns.column_name, columns.is_nullable, columns.data_type, columns.character_maximum_length from information_schema.columns where table_name = 'claim_data';
-
+--estimate of Size of the on-disk & Number of live rows
+SELECT relpages, reltuples FROM pg_class WHERE relname = 'matable';
+select count(*) from public.matable;
 
 --search though postgre
 -- You can do the same for views by changing "routines" to "views" or "tables" or "triggers"
-SELECT routine_name,routine_catalog, routine_schema, routine_type,* FROM information_schema.routines -- 
+SELECT routine_name,routine_catalog, routine_schema, routine_type,* 
+FROM information_schema.routines -- 
 where routine_definition like '%MYSTRING%' or  --routines(function, proc)
 	  routine_name like '%MYSTRING%'
 SELECT trigger_catalog, trigger_name, trigger_catalog, event_manipulation, 
@@ -217,12 +281,56 @@ each connection can have
 	SELECT version();
 	select current_user, session_user, current_role;
 	
+	
+--command  --https://www.geeksforgeeks.org/postgresql-psql-commands/
+--          https://www.postgresql.org/docs/current/app-psql.html
+psql --host=localhost --dbname=postgres --username=postgres --to connect -W have you enter password
+psql -U a_user -- will connect to a_user db
+\l+ list availale databasesi included size or select pg_database_size('forumdb');
+\d all tables or table
+\c change db
+\a aligned/non aligned column output
+\x expanded display on/off
+\du or du+ uqser privilege --+will give more columns - user may have some priv hidden in "information_schema.table_privileges"
+\dt - \d table description included indexes , columns definitions
+\dt schema_name.*	
+\dn or dn+ schema list -- also return priv on schema
+\dv list view
+-- permission and role as Access Control Lists (ACLs) with this format grantee=flags/grantor
+-- https://www.postgresql.org/docs/current/ddl-priv.html
+\dp or \z table privilege  -- also ALTER DEFAULT PRIVILEGES at https://www.postgresql.org/docs/current/sql-alterdefaultprivileges.html 
+                           --on schema the priv should be GRANT USAGE ON SCHEMA x TO ROLE y
+\q to quit if exit or quit don''t work						   
+
+
+/* inspecting ACL Access Control Lists  with function aclexplode on an object here domain */
+WITH acl AS (
+             SELECT relname,
+                    (aclexplode(relacl)).grantor,
+                    (aclexplode(relacl)).grantee,
+                    (aclexplode(relacl)).privilege_type
+            FROM pg_class )
+         SELECT g.rolname AS grantee,
+                acl.privilege_type AS permission,
+                gg.rolname AS grantor
+         FROM acl
+         JOIN pg_roles g ON g.oid = acl.grantee
+         JOIN pg_roles gg ON gg.oid = acl.grantor
+         WHERE acl.relname = 'domain';
+
+
 -- roles
 create view role_routine_grants 
  (grantor, grantee, specific_catalog, specific_schema, specific_name, routine_catalog, 
 routine_schema,routine_name, privilege_type, is_grantable)
-	SELECT * FROM information_schema.role_routine_grants
-    SELECT * FROM information_schema.table_privileges where grantee = 'dba'	
+--inspect privileges on different objects of databases
+	SELECT distinct privilege_type FROM information_schema.table_privileges where grantee = 'casharc_ro';
+SELECT distinct privilege_type FROM information_schema.role_table_grants where table_name not like 'pg_%' and grantee = 'casharc_ro'; --included views
+SELECT * FROM information_schema.role_routine_grants where grantee = 'casharc_ro';
+SELECT * FROM information_schema.role_udt_grants where grantee = 'casharc_ro';
+select * from information_schema.role_usage_grants where grantee = 'casharc_ro';
+select * from information_schema.views where table_name not like 'pg_%'; --included system views
+
 	alter role mbello with superuser
 	alter role mbello with nosuperuser -- superuser, password, createdb, createrole, inherit, login, nologin...
 	SELECT * FROM pg_authid /*pg_roles*/ WHERE rolname = 'luca'
@@ -232,18 +340,51 @@ routine_schema,routine_name, privilege_type, is_grantable)
                JOIN pg_roles g ON g.oid = m.roleid
 		  WHERE  r.rolname = 'mbello'	   
           ORDER BY r.rolname;
+		  
 	execute as login 	  . set role to mbello
-	
---command  --https://www.geeksforgeeks.org/postgresql-psql-commands/
-psql --host=localhost --dbname=postgres --username=postgres --to connect -W have you enter password
-psql -U a_user -- will connect to a_user db
-\l availale databases
-\c change db
-\a aligned/non aligned column output
-\x expanded display on/off
-\du or du+ user privilege --+will give more columns - user may have some priv hidden in "information_schema.table_privileges"
-\dt table description	
-\dv list view
--- permission and role as Access Control Lists (ACLs) with this format grantee=flags/grantor
--- https://www.postgresql.org/docs/current/ddl-priv.html
-\dp or \z table privilege 
+
+
+
+Indexes
+Postgres Statistics Collector(pg_stat_..) is a first class subsystem
+
+index-only scan ~ covering index
+
+https://www.geekytidbits.com/performance-tuning-postgres/#:~:text=Performance%20Tuning%20Queries%20in%20PostgreSQL%201%20Finding%20Slow,it%E2%80%99s%20time%20for%20the%20fun%20to%20begin.%20
+
+-- 2 important links inside
+--indexes on a table : plsql cmd > \d tablename 
+-- SET enable_seqscan = OFF; get optimizer to prefer using indexes
+-- set enable_indexscan = false;
+-- set enable_bitmapscan = false; ie mean bitmap heap scan = seq i/o with index selectivity
+--hash join is that the join operator can only return true for pairs of left and right values that hash to the same hash code
+--merge on equality conditions and ordered
+-- hash as merge but on hashable ie non ordered data
+SELECT tablename, indexname, indexdef -- doees isolate the index name
+FROM
+    pg_indexes
+WHERE
+    schemaname = 'public' and tablename= 'payments'
+ORDER BY
+    tablename, indexname;
+--index prop from pg_index view	and pages, tuples
+SELECT relname as tablename, c.relpages, c.reltuples,
+          i.indisunique as uniq, i.indisclustered as clustered, i.indisvalid as valid,
+          pg_catalog.pg_get_indexdef(i.indexrelid, 0, true) as create_statement
+          FROM pg_class c JOIN pg_index i on c.oid = i.indrelid
+          WHERE c.relname = 'payments';
+--index usage pg_stat_user_indexes : Same as pg_stat_all_indexes, except that only indexes on user tables are shown.
+SELECT indexrelname, idx_scan, idx_tup_read, idx_tup_fetch 
+FROM pg_stat_user_indexes 
+WHERE relname = 'posts'; -- table posts
+
+--update stat
+ANALYZE posts; -- tsql UPDATE STATISTICS posts
+--current stat in pg_stats - sys.dm_db_index_usage_stats with tsql
+SELECT tablename, attname, n_distinct, most_common_vals,most_common_freqs,correlation,  avg_width, null_frac, histogram_bounds
+          FROM pg_stats
+          WHERE tablename = 'posts'; --- most_common_freqs * tuples in tables = tuples for a value od a column
+
+
+
+
