@@ -9,6 +9,13 @@ select * from TABLE
 --pgsql
 EXPLAIN select * from TABLE
 
+--data type 
+datetime/datetime2 (tsq) => timestamp(psql) with time zone => datetimeoffset (tsql) 
+varchar(n) n ie n bytes length (tsql) <> n ie n characters length
+no confusion with timestamp  = rowversion in TSQL
+
+-- add a new column with default to a table works differently in pg 9.3 versus tsql 2017.
+pg will update the previous value by default. If not wanted, please find other solution
 
 --closest tsql
 select datediff(mm,'20150101', '20210401')
@@ -32,5 +39,6 @@ SELECT AGE (timestamp '2001-01-01', timestamp '2020-01-01'); -- 19 years
 -- like 
 a.adsrc like '%merchantbatch_id_seq%'; --sql
 a.adsrc ~ 'merchantbatch_id_seq'; -- psql
+
 
 

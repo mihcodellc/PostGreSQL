@@ -23,14 +23,14 @@ PostgreSQL catalog is much more accurate and
 	PostgreSQL-specific that the general information schema compared to information schema
 	
 postmaster: When the cluster is started, a single process called the postmaster is launched	
+postmaster is just the root of all PostgreSQL processes, with the main aim of keeping all the other processes under control
 backend: every time a new connection against the cluster is opened, the cluster reacts by launching 
 	a new backend process to serve it until the connection ends
-
 contrib package: is a set of well-known extensions and utilities that can enhance your PostgreSQL experience	
  
 Installing PostgreSQL via pgenv for mutilversion environement on same machine 
  
-Amazon rds, 
+Amazon RDS, 
 Amazon RedShift,
 Aurora PostgreSQL 
 	are PostgreSQL variants
@@ -116,11 +116,13 @@ end;  --required
 $$ --required or $aText$
 
 
-*************ADMIN
+*************ADMIN - monitoring
+pgBadger is a PostgreSQL performance analyzer, built for speed with fully detailed reports based on your PostgreSQL log files.
 Ubuntu/debian
-pg_lsclusters - show information about all PostgreSQL clusters
+pg_lsclusters # show information about all PostgreSQL clusters
 	pgrep -a post # version looking at the postmaster process
-pg_ctlcluster ie pg_ctl for ubuntu, tool that allows you to perform different actions on a cluster
+pg_ctlcluster ie pg_ctl for ubuntu, tool that allows you to perform different actions on a cluster 
+			 for different versions of postgresql
 pg_lsclusters -s # Include start.conf information in status column.
 
 sudo service postgresql start
@@ -160,8 +162,9 @@ select pg_size_pretty(pg_relation_size('accountnumber')) AS table_size,
 
 select pg_size_pretty(pg_database_size('prod1'));
 --db and size
-select datname, datdba,pg_size_pretty(pg_database_size(datname))
-from pg_database;
+select datname, datdba,pg_size_pretty(pg_database_size(datname)) db_size
+from pg_database
+;
 
 -- auto-explain(an extension) triggers when a running query is slower than a specified threshold, and then dumps in the PostgreSQL logs
 -- database administrator can get an insight into slow queries and their execution plan
@@ -287,6 +290,7 @@ each connection can have
 psql --host=localhost --dbname=postgres --username=postgres --to connect -W have you enter password
 psql -U a_user -- will connect to a_user db
 \l+ list availale databasesi included size or select pg_database_size('forumdb');
+\conninfo
 \d all tables or table
 \c change db
 \a aligned/non aligned column output
