@@ -119,7 +119,7 @@ $$ --required or $aText$
 *************ADMIN - monitoring
 pgBadger is a PostgreSQL performance analyzer, built for speed with fully detailed reports based on your PostgreSQL log files.
 Ubuntu/debian
-pg_lsclusters # show information about all PostgreSQL clusters
+pg_lsclusters # show information about all PostgreSQL clusters ---affiche repertoire du log
 	pgrep -a post # version looking at the postmaster process
 pg_ctlcluster ie pg_ctl for ubuntu, tool that allows you to perform different actions on a cluster 
 			 for different versions of postgresql
@@ -136,6 +136,9 @@ pg_ctl start -l logfile
 SELECT  pg_current_logfile(); -- https://stackoverflow.com/questions/67924176/where-are-the-postgres-logs
 SHOW logging_collector; --log started? ie ON
 SHOW log_directory; -- where is log
+show all;
+show SERVER_VERSION;
+
 
 
 --memory cpu, ....
@@ -175,6 +178,11 @@ auto_explain.log_analyze = on -- ie  perform EXPLAIN ANALYZE
 auto_explain.log_format(json) 
 -- to query the LOG
 sudo tail -f /postgres/12/log/postgresql.log
+--log folder contains
+postgresql-date_time.csv -- query are found here. use grep to search 
+postgresql-date_time.log 
+
+
 --describe table EXPLAIN ie no output rows
 EXPLAIN ANALYZE select * from information_schema.columns
 where table_name = 'accountnumber' limit 1;
@@ -287,15 +295,26 @@ each connection can have
 	
 --command  --https://www.geeksforgeeks.org/postgresql-psql-commands/
 --          https://www.postgresql.org/docs/current/app-psql.html
+-- listen port
+sudo netstat -tulpn | grep LISTEN
+--psql -d database -U user -h host
+sudo -i -u postgres # switch to user postgres to access the db server
+$ id mbello # id command in Linux is used to find out user and group names and numeric ID’s
+--terminate statement with ; or \g ie statement terminator
+--once connect to db server # admin > not admin
+--help
+\h command Or \?
+psql --host=localhost --dbname=postgres --username=postgres --to connect -W have you enter password
 psql --host=localhost --dbname=postgres --username=postgres --to connect -W have you enter password
 psql -U a_user -- will connect to a_user db
+ -- introspection commands are used to query the db catalogs
 \l+ list availale databasesi included size or select pg_database_size('forumdb');
 \conninfo
 \d all tables or table
 \c change db
 \a aligned/non aligned column output
 \x expanded display on/off
-\du or du+ uqser privilege --+will give more columns - user may have some priv hidden in "information_schema.table_privileges"
+\du or du+ user privilege --+will give more columns - user may have some priv hidden in "information_schema.table_privileges"
 \dt - \d table description included indexes , columns definitions
 \dt schema_name.*	
 \dn or dn+ schema list -- also return priv on schema
@@ -304,31 +323,41 @@ psql -U a_user -- will connect to a_user db
 -- https://www.postgresql.org/docs/current/ddl-priv.html
 \dp or \z table privilege  -- also ALTER DEFAULT PRIVILEGES at https://www.postgresql.org/docs/current/sql-alterdefaultprivileges.html 
                            --on schema the priv should be GRANT USAGE ON SCHEMA x TO ROLE y
-\q to quit if exit or quit don''t work						   
+\q or quit or ctrl+D -- exit psql						   
 
+--execute statements' file.SQL
+\i test.sql
 
+-- roles
 /* inspecting ACL Access Control Lists  with function aclexplode on an object here domain */
 WITH acl AS (
-             SELECT relname,
+             SELECT relname,relacl,reltuples,
                     (aclexplode(relacl)).grantor,
                     (aclexplode(relacl)).grantee,
-                    (aclexplode(relacl)).privilege_type
+                    (aclexplode(relacl)).privilege_type,
+                    CASE relkind 
+			    WHEN 'r' THEN 'table' 
+			    WHEN 'v' THEN 'view' 
+			    WHEN 'm' THEN 'materialized view' 
+			    WHEN 'S' THEN 'sequence' 
+			    WHEN 'f' THEN 'foreign table'
+		    END as Type
             FROM pg_class )
-         SELECT g.rolname AS grantee,
+         SELECT acl.relname, g.rolname AS grantee,
                 acl.privilege_type AS permission,
-                gg.rolname AS grantor
+                gg.rolname AS grantor, acl.relacl, acl.reltuples, acl.Type
          FROM acl
          JOIN pg_roles g ON g.oid = acl.grantee
          JOIN pg_roles gg ON gg.oid = acl.grantor
          WHERE acl.relname = 'domain';
 
 
--- roles
+
 create view role_routine_grants 
  (grantor, grantee, specific_catalog, specific_schema, specific_name, routine_catalog, 
 routine_schema,routine_name, privilege_type, is_grantable)
 --inspect privileges on different objects of databases
-	SELECT distinct privilege_type FROM information_schema.table_privileges where grantee = 'casharc_ro';
+SELECT distinct privilege_type FROM information_schema.table_privileges where grantee = 'casharc_ro';
 SELECT distinct privilege_type FROM information_schema.role_table_grants where table_name not like 'pg_%' and grantee = 'casharc_ro'; --included views
 SELECT * FROM information_schema.role_routine_grants where grantee = 'casharc_ro';
 SELECT * FROM information_schema.role_udt_grants where grantee = 'casharc_ro';
@@ -346,7 +375,14 @@ select * from information_schema.views where table_name not like 'pg_%'; --inclu
           ORDER BY r.rolname;
 		  
 	execute as login 	  . set role to mbello
-
+-- Drop user or role 
+1. from terminal,connect
+2. drop user mbello;
+3. if complaining, becuase checking pg_shdepend but no info on type object
+	-- REVOKE ALL PRIVILEGES ON DATABASE/ALL SCHEMAS/FUNCTIONS/TABLES/SEQUENCES FROM mbello
+	-- REASSIGN OWNED BY mbello TO postgres;
+	-- DROP USER mbello
+	--keeps revoke or reassign accross databases, schemas, tables
 
 
 Indexes
@@ -356,8 +392,10 @@ index-only scan ~ covering index
 
 https://www.geekytidbits.com/performance-tuning-postgres/#:~:text=Performance%20Tuning%20Queries%20in%20PostgreSQL%201%20Finding%20Slow,it%E2%80%99s%20time%20for%20the%20fun%20to%20begin.%20
 
+https://www.postgresql.org/docs/current/performance-tips.html
+
 -- 2 important links inside
---indexes on a table : plsql cmd > \d tablename 
+--indexes on a table : plsql cmd > \d tablename or in pgadmin like management studio
 -- SET enable_seqscan = OFF; get optimizer to prefer using indexes
 -- set enable_indexscan = false;
 -- set enable_bitmapscan = false; ie mean bitmap heap scan = seq i/o with index selectivity
