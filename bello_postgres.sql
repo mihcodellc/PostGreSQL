@@ -328,6 +328,12 @@ psql -U a_user -- will connect to a_user db
 --LibPQ use by app to connect. a connection string in this lib is
 postgresql://username@host:port/database
 
+--allow connection to a port in postgresql.conf
+listen_addresses = '*'
+
+--allow user luca in pg_hba.conf after error:No pg_hba.conf entry
+host all luca 127.0.0.1/32 trust
+
 --execute statements' file.SQL
 \i test.sql
 
