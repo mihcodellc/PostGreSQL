@@ -295,7 +295,7 @@ each connection can have
 	
 --command  --https://www.geeksforgeeks.org/postgresql-psql-commands/
 --          https://www.postgresql.org/docs/current/app-psql.html
--- listen port
+-- listen port default port is 5432
 sudo netstat -tulpn | grep LISTEN
 --psql -d database -U user -h host
 sudo -i -u postgres # switch to user postgres to access the db server
