@@ -126,7 +126,7 @@ pg_ctlcluster ie pg_ctl for ubuntu, tool that allows you to perform different ac
 pg_lsclusters -s # Include start.conf information in status column.
 
 sudo service postgresql start
-sudo pg_ctlcluster stop -m smart # smart or fast or immediate 
+sudo pg_ctlcluster stop -m smart # smart(wait all connections) or fast(disconnect all) or immediate (abort all processes)
 sudo pg_ctlcluster 12 main status
 
 
@@ -323,7 +323,10 @@ psql -U a_user -- will connect to a_user db
 -- https://www.postgresql.org/docs/current/ddl-priv.html
 \dp or \z table privilege  -- also ALTER DEFAULT PRIVILEGES at https://www.postgresql.org/docs/current/sql-alterdefaultprivileges.html 
                            --on schema the priv should be GRANT USAGE ON SCHEMA x TO ROLE y
-\q or quit or ctrl+D -- exit psql						   
+\q or quit or ctrl+D -- exit psql	
+
+--LibPQ use by app to connect. a connection string in this lib is
+postgresql://username@host:port/database
 
 --execute statements' file.SQL
 \i test.sql
