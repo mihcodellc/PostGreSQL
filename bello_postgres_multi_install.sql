@@ -79,6 +79,6 @@ Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
 
 Getting to Know Your Cluster
-		Exploring the disk layout of PGDATA
+		Objects in the PGDATA directory
 		
 2/6/2023 config files, install new postgresql, run command for diff versions of postgresql hosted:start, stop, reload, postgresql processes
