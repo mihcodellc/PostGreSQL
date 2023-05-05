@@ -68,6 +68,13 @@ The maintenance processes are as follows:
 >Background workers: These are processes that can be customized by the user to perform background tasks.
 >WAL receiver or WAL sender: These are processes involved in receiving from or sending data to another cluster in replication scenarios.
 
+
+The main directories available in PGDATA are as follows:
+  >base is a directory that contains all the users'' data, including databases, tables, and other objects.
+  >global is a directory containing cluster-wide objects.
+  >pg_wal is the directory containing the WAL files.
+  >pg_stat and pg_stat_tmp are, respectively, the storage of the permanent and temporary statistical information about the status and health of the cluster.
+
 Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
 
