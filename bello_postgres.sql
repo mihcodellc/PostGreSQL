@@ -277,6 +277,13 @@ CREATE TRIGGER sensor_trig
 SELECT p.relname, a.adsrc FROM pg_class p
        JOIN pg_attrdef a ON (p.relfilenode = a.adrelid)
        WHERE a.adsrc ~ 'merchantbatch_id_seq';
+--schemas and sizes
+SELECT n.nspname, pg_size_pretty(sum(pg_relation_size(C.oid))) AS size
+FROM pg_class C
+LEFT JOIN pg_namespace N
+	ON (N.oid = C.relnamespace)
+WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+GROUP BY nspname;
 
 
 PostgreSQL, users are referred to as login roles,
