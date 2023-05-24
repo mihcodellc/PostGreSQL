@@ -306,6 +306,7 @@ each connection can have
 sudo netstat -tulpn | grep LISTEN
 --psql -d database -U user -h host
 sudo -i -u postgres # switch to user postgres to access the db server
+psql -U postgres # connect to pg as pstgres role to db postgres
 $ id mbello # id command in Linux is used to find out user and group names and numeric ID’s
 --execute as login in tsql equivalent
 set role to mbello
