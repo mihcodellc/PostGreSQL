@@ -326,6 +326,15 @@ psql -U a_user -- will connect to a_user db
 \x expanded display on/off
 \du or du+ user privilege --+will give more columns - user may have some priv hidden in "information_schema.table_privileges"
 \dt - \d table description included indexes , columns definitions
+\dT - user data type -- https://www.postgresql.org/docs/15/plpgsql-declarations.html
+	select * from pg_attribute where attrelid =
+        (select typrelid,* from pg_type where typname = 'type_name')
+	Copying Types -> variable%TYPE : %TYPE provides the data type of a variable or table column
+	Row Types : Such a variable can hold a whole row of a SELECT or FOR query result
+		-> name table_name%ROWTYPE; : A row variable can be declared to have the same type as the rows of an existing table or view
+		-> name composite_type_name; : 
+	Record Types: Record variables are similar to row-type variables, but they have no predefined structure. 
+		-> name RECORD;
 \dt schema_name.*	
 \dn or dn+ schema list -- also return priv on schema
 \dv list view
