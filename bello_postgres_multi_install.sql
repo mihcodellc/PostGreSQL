@@ -55,6 +55,13 @@ sudo -i -u postgres
 #set PGDATA
 export PGDATA=/postgres/12
 
+The PGDATA directory is structured in several files and subdirectories. The main files are as follows:
+	postgresql.conf is the main configuration file, used as default when the service is started.
+	postgresql.auto.conf is the automatically included configuration file used to store dynamically changed settings via SQL instructions.
+	pg_hba.conf is the HBA file that provides the configuration regarding available database connections.
+	PG_VERSION is a text file that contains the major version number (useful when inspecting the directory to understand which version of the cluster has managed the PGDATA directory).
+	postmaster.pid is the PID of the running cluster.	
+
 
 The maintenance processes are as follows:
 
@@ -75,6 +82,7 @@ The main directories available in PGDATA are as follows:
   >pg_wal is the directory containing the WAL files.
   >pg_stat and pg_stat_tmp are, respectively, the storage of the permanent and temporary statistical information about the status and health of the cluster.
 
+	
 Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
 
