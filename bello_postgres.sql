@@ -70,6 +70,7 @@ model db = template0 & template1
 pg_basebackup -- point in time recovery
 pg_dump -- regular 
 pg_restore
+	  eg: pg_restore -d Created_DB_Name_Empty -Fd db_dump -U postgres -h localhost -W --# -W ask pass -Fd format(directory|custom|tar)
 
 https://psql-tips.org/psql_tips_all.html
 https://planet.postgresql.org/
