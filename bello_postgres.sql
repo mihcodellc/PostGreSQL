@@ -170,6 +170,7 @@ select datname, datdba,pg_size_pretty(pg_database_size(datname)) db_size
 from pg_database
 ;
 
+--read exec plan : https://www.cybertec-postgresql.com/en/how-to-interpret-postgresql-explain-analyze-output/
 -- auto-explain(an extension) triggers when a running query is slower than a specified threshold, and then dumps in the PostgreSQL logs
 -- database administrator can get an insight into slow queries and their execution plan
 -- config auto explain in postgresql.conf
