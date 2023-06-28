@@ -424,6 +424,20 @@ https://www.geekytidbits.com/performance-tuning-postgres/#:~:text=Performance%20
 
 https://www.postgresql.org/docs/current/performance-tips.html
 
+
+CREATE INDEX CONCURRENTLY ix_name --CONCURRENTLY for ONLINE =ON in TSQL
+  ON public.Mytable
+  USING btree
+  (colname);
+
+CREATE INDEX ix_name
+  ON public.Mytable
+  USING btree
+  (colname);
+
+DROP INDEX ix_name
+
+
 -- 2 important links inside
 --indexes on a table : plsql cmd > \d tablename or in pgadmin like management studio
 -- SET enable_seqscan = OFF; get optimizer to prefer using indexes
