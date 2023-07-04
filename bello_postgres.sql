@@ -210,6 +210,10 @@ select count(*) from public.matable;
 
 --search though postgre
 -- You can do the same for views by changing "routines" to "views" or "tables" or "triggers"
+-- user  without priv can use in command line
+--             https://www.postgresql.org/docs/current/functions-info.html
+--             select pg_get_viewdef('era_query_view_test2'); pg_get_triggerdef, pg_get_ruledef, pg_get_indexdef, pg_get_functiondef
+--             select pg_catalog.pg_get_functiondef('MyFunctionName(a_datype)'::regprocedure::oid);
 SELECT routine_name,routine_catalog, routine_schema, routine_type,* 
 FROM information_schema.routines -- 
 where routine_definition like '%MYSTRING%' or  --routines(function, proc)
