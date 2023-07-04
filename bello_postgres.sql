@@ -344,6 +344,7 @@ psql -U a_user -- will connect to a_user db
 -- https://www.postgresql.org/docs/current/ddl-priv.html
 \dp or \z table privilege  -- also ALTER DEFAULT PRIVILEGES at https://www.postgresql.org/docs/current/sql-alterdefaultprivileges.html 
                            --on schema the priv should be GRANT USAGE ON SCHEMA x TO ROLE y
+	                   -- revoke select(table_name,view_definition) on  information_schema.views from medrx_rw;
 \q or quit or ctrl+D -- exit psql	
 
 --LibPQ use by app to connect. a connection string in this lib is
