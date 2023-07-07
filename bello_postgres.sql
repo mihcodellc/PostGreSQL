@@ -243,19 +243,6 @@ FROM information_schema.triggers
 select pg_catalog.pg_get_functiondef('copy_remit_service_lines'::regproc::oid); 
 
 --Functions
---CREATE OR REPLACE function fucntionName(
---	a_param CHARACTER VARYING(64)
---) RETURNS TABLE( id BIGINT)
---LANGUAGE plpgsql VOLATILE
---AS
---$BODY$
---DECLARE a_var int; -- ...
---BEGIN
-----required RETURN QUERY to run the statement
---RETURN QUERY
---    SELECT 'statement' as yourQuery;
---END;
---$BODY
  pg trigger,db object, allows you TO CALL A FUNCTION(define as returns trigger) if an INSERT, UPDATE, DELETE or a TRUNCATE clause happens on a table
 same function can be applied to many tables, is possible
 tsql trigger define the STATEMENTS to execute to if an INSERT, UPDATE, or DELETE clause happens a table
@@ -271,7 +258,21 @@ pg trigger on statement level but also ROW LEVEL and add CONDITION other that be
 		whereas IN TSQL, Alter will change the definition and the BODY
  pg_trigger_depth > 0 VERSUS trigger_nestlevel() > 1
  constant trigger exists in pg fired after row triggers, from which they differ by adding a timing 
- 
+
+-- example of function	 
+CREATE OR REPLACE function fucntionName(
+	a_param CHARACTER VARYING(64)
+) RETURNS TABLE( id BIGINT)
+LANGUAGE plpgsql VOLATILE
+AS
+$BODY$
+DECLARE a_var int; -- ...
+BEGIN
+--required RETURN QUERY to run the statement
+RETURN QUERY
+    SELECT 'statement' as yourQuery;
+END;
+$BODY$;
  
  CREATE TRIGGER sensor_trig 
     BEFORE INSERT ON t_sensor 
@@ -323,7 +324,7 @@ GROUP BY nspname;
 PostgreSQL, users are referred to as login roles,
 
 A login role is a role that has been assigned the CONNECT privilege.
-
+-- user and pricv to log in
 SELECT rolname as loginUser, rolsuper,rolcanlogin, 
 	shobj_description(oid, 'pg_authid') AS comment_onsharedDBobject --(oid) no guarantee that OIDs are unique across different system catalogs;
 FROM pg_roles
@@ -450,7 +451,7 @@ select * from information_schema.views where table_name not like 'pg_%'; --inclu
 	-- REVOKE ALL PRIVILEGES ON DATABASE/ALL SCHEMAS/FUNCTIONS/TABLES/SEQUENCES FROM mbello
 	-- REASSIGN OWNED BY mbello TO postgres;
 	-- DROP USER mbello
-	--keeps revoke or reassign accross databases, schemas, tables
+	--keeps revoke or reassign across databases, schemas, tables
 
 
 Indexes
