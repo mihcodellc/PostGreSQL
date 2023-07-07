@@ -215,6 +215,8 @@ select count(*) from public.matable;
 --             https://www.postgresql.org/docs/current/functions-info.html
 --             select pg_get_viewdef('era_query_view_test2'); pg_get_triggerdef, pg_get_ruledef, pg_get_indexdef, pg_get_functiondef
 --             select pg_catalog.pg_get_functiondef('MyFunctionName(a_datype)'::regprocedure::oid);
+-- For each db, (pgAdmin, dataGrip)there is node for catalogs (ANSI ie information schema, PostGreSQL ie pg_catalog, PgAgent)
+-- pg_catalog has every function, views possible from PG = MS SQL Server db > programmability > function, views
 SELECT routine_name,routine_catalog, routine_schema, routine_type,* 
 FROM information_schema.routines -- 
 where routine_definition like '%MYSTRING%' or  --routines(function, proc)
