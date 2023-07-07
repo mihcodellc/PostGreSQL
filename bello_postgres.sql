@@ -249,7 +249,7 @@ tsql trigger define the STATEMENTS to execute to if an INSERT, UPDATE, or DELETE
 pg trigger on statement level but also ROW LEVEL and add CONDITION other that before/after/instead of
 	apply it to a ROWS
 	NEW and OLD vs deleted, inserted
-	UPDATE(col) Versus (TG_OP = 'DELETE')
+	(TG_OP = 'DELETE')
  modify the cost of a function
  PG let you specify the language used by the function
  trigger before event(INSERT/UPDATE/DELETE) doesn''t exist in TSQL
@@ -273,17 +273,28 @@ RETURN QUERY
     SELECT 'statement' as yourQuery;
 END;
 $BODY$;
- 
+
+--1st step: create function trigger
+CREATE OR REPLACE function trig_func() 
+	returns trigger 
+LANGUAGE plpgsql VOLATILE
+AS
+$BODY$	
+DECLARE a_var int; -- ...
+BEGIN	
+	IF pg_trigger_depth() > 1 THEN -- tsql : IF trigger_nestlevel() > 1 RETURN;
+            RETURN NULL;
+        END IF;
+	--statement
+	RETURN NULL
+END;
+$BODY$;	
+--2nd create trigger which execute the function trigger
  CREATE TRIGGER sensor_trig 
     BEFORE INSERT ON t_sensor 
     FOR EACH ROW  
-    EXECUTE PROCEDURE trig_func(); 
+    EXECUTE PROCEDURE trig_func(); -- CREATE OR REPLACE function trig_func() returns trigger as 
  
-CREATE TRIGGER sensor_trig  
-	ON Sales.Customer  
-	FOR AFTER INSERT, UPDATE   
-    AS 
-    RAISERROR ('Notify Customer Relations', 16, 10); 
 
  --Views 
  in postgres they can be temp
