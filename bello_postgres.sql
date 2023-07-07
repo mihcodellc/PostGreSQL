@@ -215,8 +215,20 @@ select count(*) from public.matable;
 --             https://www.postgresql.org/docs/current/functions-info.html
 --             select pg_get_viewdef('era_query_view_test2'); pg_get_triggerdef, pg_get_ruledef, pg_get_indexdef, pg_get_functiondef
 --             select pg_catalog.pg_get_functiondef('MyFunctionName(a_datype)'::regprocedure::oid);
--- For each db, (pgAdmin, dataGrip)there is node for catalogs (ANSI ie information schema, PostGreSQL ie pg_catalog, PgAgent)
+-- For each db, (pgAdmin, dataGrip)there are  3 sys schemas :
+--	- information_schema (ie ANSI)
+--	- pg_catalog (PostGreSQL database as Databases are called “catalogs” in the SQL standard)
+--	- PgAgent
 -- pg_catalog has every function, views possible from PG = MS SQL Server db > programmability > function, views
+--**databases in the cluster
+select * from pg_database;
+--**schemas in a database
+ SELECT nspname,*
+ FROM pg_catalog.pg_namespace where nspname not like 'pg%temp%';
+  --or
+ SELECT schema_name,*
+ FROM information_schema.schemata where schema_name not like 'pg%temp%';
+
 SELECT routine_name,routine_catalog, routine_schema, routine_type,* 
 FROM information_schema.routines -- 
 where routine_definition like '%MYSTRING%' or  --routines(function, proc)
@@ -231,6 +243,19 @@ FROM information_schema.triggers
 select pg_catalog.pg_get_functiondef('copy_remit_service_lines'::regproc::oid); 
 
 --Functions
+--CREATE OR REPLACE function fucntionName(
+--	a_param CHARACTER VARYING(64)
+--) RETURNS TABLE( id BIGINT)
+--LANGUAGE plpgsql VOLATILE
+--AS
+--$BODY$
+--DECLARE a_var int; -- ...
+--BEGIN
+----required RETURN QUERY to run the statement
+--RETURN QUERY
+--    SELECT 'statement' as yourQuery;
+--END;
+--$BODY
  pg trigger,db object, allows you TO CALL A FUNCTION(define as returns trigger) if an INSERT, UPDATE, DELETE or a TRUNCATE clause happens on a table
 same function can be applied to many tables, is possible
 tsql trigger define the STATEMENTS to execute to if an INSERT, UPDATE, or DELETE clause happens a table
@@ -299,11 +324,16 @@ PostgreSQL, users are referred to as login roles,
 
 A login role is a role that has been assigned the CONNECT privilege.
 
+SELECT rolname as loginUser, rolsuper,rolcanlogin, 
+	shobj_description(oid, 'pg_authid') AS comment_onsharedDBobject --(oid) no guarantee that OIDs are unique across different system catalogs;
+FROM pg_roles
+order by comment_onsharedDBobject;
+
 each connection can have 
 	one active transaction at a time and 
 	one fully active statement at any time.
 	
-	SELECT current_database(), ;
+	SELECT current_(), ;
 	SELECT inet_server_addr(), inet_server_port();
 	SELECT version();
 	select current_user, session_user, current_role;
