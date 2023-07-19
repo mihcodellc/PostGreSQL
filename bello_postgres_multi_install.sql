@@ -60,8 +60,11 @@ The PGDATA directory is structured in several files and subdirectories. The main
 	postgresql.auto.conf is the automatically included configuration file used to store dynamically changed settings via SQL instructions.
 	pg_hba.conf is the HBA file that provides the configuration regarding available database connections.
 	PG_VERSION is a text file that contains the major version number (useful when inspecting the directory to understand which version of the cluster has managed the PGDATA directory).
-	postmaster.pid is the PID of the running cluster.	
-
+	postmaster.pid is the PID of the running cluster.
+	
+inspect a PGDATA directory and extract mnemonic names: oid2name
+The integer identifier is named OID (Object Identifier); this name is a historical term that today corresponds to the so-called filenode
+"escaping" the PGDATA directory by means of tablespaces	
 
 The maintenance processes are as follows:
 
@@ -82,11 +85,20 @@ The main directories available in PGDATA are as follows:
   >pg_wal is the directory containing the WAL files.
   >pg_stat and pg_stat_tmp are, respectively, the storage of the permanent and temporary statistical information about the status and health of the cluster.
 
+
+	
+Managing Users and Connections	  
+	A role can be a single account, a group of accounts, or even both
+	a role should express one and only one concept at a time
+	CONNECTION LIMIT <n> allows the user to open no more than <n> simultaneous connections to the cluster
+	in order to be allowed to interactively log in, the role must also have the LOGIN option
+
 	
 Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
 
-Getting to Know Your Cluster
-		Objects in the PGDATA directory
+Managing Users and Connections	 
+	Using a role as a group
+	
 		
 2/6/2023 config files, install new postgresql, run command for diff versions of postgresql hosted:start, stop, reload, postgresql processes
