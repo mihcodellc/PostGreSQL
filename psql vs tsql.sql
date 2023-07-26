@@ -57,7 +57,7 @@ declare v_count int :=0;
 begin
    --statement
 end  
-$$;
+$$; --; can be just after end
 
 --tsql
 begin tran
