@@ -71,4 +71,19 @@ begin
 end
 
 
---***insert, UPDATE 
+--***insert, UPDATE, delete: obtain data from modified rows while they are being manipulated
+--psql	
+--INSERT, UPDATE, and DELETE commands all have an optional RETURNING clause 
+--In an INSERT, the data available to RETURNING is the row as it was inserted.	
+--IN an UPDATE, the data available to RETURNING is the new content of the modified row
+--In a DELETE, the data available to RETURNING is the content of the deleted row
+with cte as (
+UPDATE products SET price = price * 1.10
+  WHERE price <= 99.99
+  RETURNING name, price AS new_price;
+) select * from cte
+--tsql
+UPDATE products SET price = price * 1.10
+	OUTPUT deleted.price as OldPrice, inserted.price as NewPrice INTO #temp
+  WHERE price <= 99.99
+
