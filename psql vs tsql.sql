@@ -41,4 +41,12 @@ a.adsrc like '%merchantbatch_id_seq%'; --sql
 a.adsrc ~ 'merchantbatch_id_seq'; -- psql
 
 
+--begin tran and roll it back
+begin; --block limit in tsql
+	<statement in psql>
+rollback;--commit
+
+begin tran
+	<statement in tsql>
+rollback tran--commit tran
 
