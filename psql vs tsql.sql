@@ -87,3 +87,6 @@ UPDATE products SET price = price * 1.10
 	OUTPUT deleted.price as OldPrice, inserted.price as NewPrice INTO #temp
   WHERE price <= 99.99
 
+---***concatenate string and assign 
+select 'text 1' || ' text 2' into v_t1t2--psql
+select @t1t2 = 'text 1' + ' text 2' --tsql
