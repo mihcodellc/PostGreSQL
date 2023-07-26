@@ -17,6 +17,11 @@ no confusion with timestamp  = rowversion in TSQL
 -- add a new column with default to a table works differently in pg 9.3 versus tsql 2017.
 pg will update the previous value by default. If not wanted, please find other solution
 
+alter table mytable add col1 int not null constraint df_col1 default 0 --update the previous column
+----select top 1 col1,* from mytable 
+--alter table payments drop constraint df_col1
+--alter table payments drop column col1	
+
 --closest tsql
 select datediff(mm,'20150101', '20210401')
 select datediff(dd,'20150101', '20210401')	
@@ -41,12 +46,27 @@ a.adsrc like '%merchantbatch_id_seq%'; --sql
 a.adsrc ~ 'merchantbatch_id_seq'; -- psql
 
 
---begin tran and roll it back
+--***begin tran and roll it back
+--psql
 begin; --block limit in tsql
 	<statement in psql>
 rollback;--commit
 
+do $$ 
+declare v_count int :=0;
+begin
+   --statement
+end  
+$$;
+
+--tsql
 begin tran
 	<statement in tsql>
 rollback tran--commit tran
+
+--declare @count int = 0;	HIS PLACE doesn't matter
+begin 
+   declare @count int = 0;
+   --statement
+end
 
