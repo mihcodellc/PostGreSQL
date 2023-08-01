@@ -1,5 +1,6 @@
 -- https://www.red-gate.com/simple-talk/blogs/how-can-sql-server-developers-get-started-with-postgre-sql/#:~:text=HOW%20CAN%20SQL%20SERVER%20DEVELOPERS%20GET%20STARTED%20WITH,JOIN%20m%20...%20%2014%20more%20rows%20
 -- https://www.postgresql.org/docs/9.3/sql-syntax-lexical.html
+-- https://www.postgresql.org/docs/9.3/sql-syntax.html
 --tsql
 set showplan_xml on
 go
