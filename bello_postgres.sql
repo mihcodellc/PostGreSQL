@@ -418,7 +418,7 @@ host all luca 127.0.0.1/32 trust
 --execute statements' file.SQL
 \i test.sql
 
--- roles
+-- roles "UserPermission_DB_Server_PG"
 /* inspecting ACL Access Control Lists  with function aclexplode on an object here domain */
 WITH acl AS (
              SELECT relname,relacl,reltuples,
@@ -426,20 +426,33 @@ WITH acl AS (
                     (aclexplode(relacl)).grantee,
                     (aclexplode(relacl)).privilege_type,
                     CASE relkind 
-			    WHEN 'r' THEN 'table' 
+			    WHEN 'r' THEN 'ordinary table' 
 			    WHEN 'v' THEN 'view' 
 			    WHEN 'm' THEN 'materialized view' 
 			    WHEN 'S' THEN 'sequence' 
 			    WHEN 'f' THEN 'foreign table'
-		    END as Type
-            FROM pg_class )
+			    when 'c' then 'composite type'
+			    when 't' then 'TOAST table'
+			    when 'p' then 'partitioned table'
+			    when 'i' then 'index'
+			    when 'I' then 'partitioned index'
+		    else relkind
+		    END as Type, n.nspname as  schema_name, n.nspacl as namespace_priv_list
+            FROM pg_class C
+LEFT JOIN pg_namespace N
+	ON (N.oid = C.relnamespace) 
+)
          SELECT acl.relname, g.rolname AS grantee,
                 acl.privilege_type AS permission,
                 gg.rolname AS grantor, acl.relacl, acl.reltuples, acl.Type
          FROM acl
          JOIN pg_roles g ON g.oid = acl.grantee
          JOIN pg_roles gg ON gg.oid = acl.grantor
-         WHERE acl.relname = 'domain';
+         where (acl.privilege_type = 'USAGE' and acl.schema_name = 'rmsadmin') 
+			or (cast(acl.namespace_priv_list as varchar(200)) ~ 'kcrawford') 
+			or (acl.relname = 'domain')
+         order by g.rolname
+
 
 
 
@@ -471,6 +484,7 @@ select * from information_schema.views where table_name not like 'pg_%'; --inclu
 3. if complaining, becuase checking pg_shdepend but no info on type object
 	-- REVOKE ALL PRIVILEGES ON DATABASE/ALL SCHEMAS/FUNCTIONS/TABLES/SEQUENCES FROM mbello
 	-- REASSIGN OWNED BY mbello TO postgres;
+	-- use UserPermission_DB_Server_PG to find the remaining place
 	-- DROP USER mbello
 	--keeps revoke or reassign across databases, schemas, tables
 
