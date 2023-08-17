@@ -202,10 +202,17 @@ where table_name = 'accountnumber' limit 1;
 		https://explain.depesz.com/
 		
 
-SELECT * FROM pg_class WHERE relname = 'claim_data' -- relation ie class or plsql "\d schema.claim_data" or "\d+ schema.claim_data"
-Select table_schema, table_name, columns.column_name, columns.is_nullable, columns.data_type, columns.character_maximum_length from information_schema.columns where table_name = 'claim_data';
+SELECT * FROM pg_class WHERE relname = 'ma_table' -- relation ie class or plsql "\d schema.claim_data" or "\d+ schema.claim_data"
+Select table_schema, table_name, columns.column_name, columns.is_nullable, columns.data_type, columns.character_maximum_length 
+from information_schema.columns where table_name = 'ma_table'
+order by columns.column_name;
 --estimate of Size of the on-disk & Number of live rows
-SELECT relpages, reltuples FROM pg_class WHERE relname = 'matable';
+SELECT relkind as type, n.nspname as schema, c.relname, c.relhastriggers, c.relpages, c.reltuples, c.relacl 
+FROM pg_class C
+LEFT JOIN pg_namespace N
+	ON (N.oid = C.relnamespace)
+WHERE relname = 'ma_table';
+
 select count(*) from public.matable;
 
 --search though postgre
