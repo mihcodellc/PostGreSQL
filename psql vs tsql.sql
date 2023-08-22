@@ -96,3 +96,7 @@ select 'text 1' || ' text 2' into v_t1t2--psql
 select @t1t2 = 'text 1' + ' text 2' --tsql
 
 --IIF in TSQL not in psql, use Case instead
+
+--export to csv
+tsql: bcp or sqlcmd or openrowset
+plsql: COPY (q<uery>) TO 'filename.csv' with  (Delimiter '|' , FORMAT CSV, HEADER TRUE,  ESCAPE E'\\');
