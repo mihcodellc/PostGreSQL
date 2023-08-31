@@ -211,7 +211,7 @@ SELECT * FROM pg_class WHERE relname = 'ma_table' -- relation ie class or plsql 
 Select table_schema, table_name, columns.column_name, columns.is_nullable, columns.data_type, columns.character_maximum_length 
 from information_schema.columns where table_name = 'ma_table'
 order by columns.column_name;
---estimate of Size of the on-disk & Number of live rows
+--estimate of Size of the on-disk & Number of live rows - find the table
 SELECT relkind as type, n.nspname as schema, c.relname, c.relhastriggers, c.relpages, c.reltuples, c.relacl 
 FROM pg_class C
 LEFT JOIN pg_namespace N
