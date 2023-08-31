@@ -143,9 +143,14 @@ show SERVER_VERSION;
 
 
 --memory cpu, ....
-htop -u mbello
-htop -p 70 #-p ie pid
-htop -s CPU # sort
+--https://vitux.com/how-to-use-htop-to-monitor-system-processes-in-ubuntu-20-04/
+F6 : To sort the displaying output. once done esc to return to normal
+F5: To display this relationship in a tree-like structure.exit with F5 one more time
+F3: to search for a specific process and type the name of the search process in the search prompt that displays at the bottom of the terminal window
+F4: to filter process and type the name of the search process in the search prompt that displays at the bottom of the terminal window	
+htop -u mbello -- or F4
+htop -p 70 #-p ie pid -- or F4
+htop -s CPU # sort -- or F6
 
 -- activities
 select pid, client_addr, datname, application_name, query 
