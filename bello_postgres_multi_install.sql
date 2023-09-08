@@ -92,7 +92,7 @@ Managing Users and Connections
 	a role should express one and only one concept at a time
 	CONNECTION LIMIT <n> allows the user to open no more than <n> simultaneous connections to the cluster
 	in order to be allowed to interactively log in, the role must also have the LOGIN option
-
+	pg_authid > pg_roles
 	
 Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
