@@ -92,13 +92,20 @@ Managing Users and Connections
 	a role should express one and only one concept at a time
 	CONNECTION LIMIT <n> allows the user to open no more than <n> simultaneous connections to the cluster
 	in order to be allowed to interactively log in, the role must also have the LOGIN option
-	pg_authid > pg_roles
-	
+	pg_authid > ie backbones for pg_roles	
+	pg_hba.conf
+		any change to it > reload the new rules via a HUP signal or by means of a reload command in pg_ctl. 
+		kind of firewall table, formerly know as host-based access, that is defined within the pg_hba.conf file.
+		The first rule that satisfies the logic is applied, and the others are skipped. 
+		each line(rule) in pg_hba.conf:
+			<connection-type> 	<database> 	<role> 		<remote-machine> 	<auth-method>
+			local/host/hostssl					all/ip			scram-sha-256/md5/reject/trust
+		the + preceding the role name ie include all the direct and indirect members.
+		Using files instead of single roles : to be continued
 Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
 
 Managing Users and Connections	 
-	Using a role as a group
+	Using files instead of single roles
 	
 		
-2/6/2023 config files, install new postgresql, run command for diff versions of postgresql hosted:start, stop, reload, postgresql processes
