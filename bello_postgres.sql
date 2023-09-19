@@ -466,7 +466,27 @@ LEFT JOIN pg_namespace N
 select distinct a.rolname, rolcanlogin,  rolsuper, rolcatupdate, p.proacl from pg_authid a
  join pg_proc p on a.oid = p.proowner 
 
+--role with members by role
+select a.rolname roleGroup, u.rolcanlogin, u.rolsuper, u.rolcatupdate, u.rolname ismemberOfroleGroup, g.rolname as grantor   
+from pg_auth_members m
+join pg_authid a on a.oid = m.roleid
+join pg_authid u on u.oid = m.member
+join pg_authid g on g.oid = m.grantor
+order by  a.rolname
 
+--role with members by members
+select u.rolname ismemberOfroleGroup, a.rolname roleGroup, u.rolcanlogin, u.rolsuper, u.rolcatupdate, g.rolname as grantor  
+from pg_auth_members m
+join pg_authid a on a.oid = m.roleid
+join pg_authid u on u.oid = m.member
+join pg_authid g on g.oid = m.grantor
+order by  ismemberOfroleGroup, roleGroup
+
+--role without members  
+select a.rolname roleGroup, a.rolcanlogin, a.rolsuper, a.rolcatupdate, ''  ismemberOfroleGroup
+from pg_authid a
+where not exists (select 1/0 from pg_auth_members m where m.roleid = a.oid)
+order by roleGroup
 
 create view role_routine_grants 
  (grantor, grantee, specific_catalog, specific_schema, specific_name, routine_catalog, 
