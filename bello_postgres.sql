@@ -313,6 +313,16 @@ $BODY$;
  columns names can be specified in the same place as param for SP for BOTH
  CREATE MATERIALIZED VIEW(pgsql) close indexed view(tsql)
  pg supports also with check option but also more cascade, local
+
+-- Materialized views	 
+SELECT distinct relname, n.nspname as  schema_name, n.nspacl as namespace_priv_list
+            FROM pg_class C
+LEFT JOIN pg_namespace N
+	ON (N.oid = C.relnamespace) 
+where relkind = 'm'
+--OR/AND
+select * from pg_matviews 
+	 
  
 --Proc start postgres 11
  postgre can commit/rollback part of statement within an SP
