@@ -113,7 +113,8 @@ PostgreSQL has three types of tables:
 		create temp table if not exists temp_users 
 	-Unlogged tables: Very fast tables to be used as support tables common to all users
 	-Logged tables: Regular tables	
-	
+
+	next "Managing temporary tables"
 Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
 
