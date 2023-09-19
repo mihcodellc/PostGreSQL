@@ -453,11 +453,18 @@ LEFT JOIN pg_namespace N
          FROM acl
          JOIN pg_roles g ON g.oid = acl.grantee
          JOIN pg_roles gg ON gg.oid = acl.grantor
-         where (acl.privilege_type = 'USAGE' and acl.schema_name = 'rmsadmin') 
-			or (cast(acl.namespace_priv_list as varchar(200)) ~ 'kcrawford') 
+         where (acl.privilege_type = 'USAGE' and acl.schema_name = 'dbo') 
+			or (cast(acl.namespace_priv_list as varchar(200)) ~ 'mbello') 
 			or (acl.relname = 'domain')
          order by g.rolname
 
+	--owners of tables, proc/functions
+	select distinct a.rolname, rolcanlogin,  rolsuper, rolcatupdate/*, relacl*/ from pg_authid a
+ join pg_class c on a.oid = c.relowner 
+
+
+select distinct a.rolname, rolcanlogin,  rolsuper, rolcatupdate, p.proacl from pg_authid a
+ join pg_proc p on a.oid = p.proowner 
 
 
 
