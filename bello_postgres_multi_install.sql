@@ -98,10 +98,13 @@ Managing Users and Connections
 		kind of firewall table, formerly know as host-based access, that is defined within the pg_hba.conf file.
 		The first rule that satisfies the logic is applied, and the others are skipped. 
 		each line(rule) in pg_hba.conf:
-			<connection-type> 	<database> 	<role> 		<remote-machine> 	<auth-method>
-			local/host/hostssl					all/ip			scram-sha-256/md5/reject/trust
+			<connection-type> 	<database> 	<role> 			<remote-machine> 	<auth-method>
+			local/host/hostssl	myDB		+forum_stats		all/ip			scram-sha-256/md5/reject/trust
+			local/host/hostssl	myDB		@rejected_users.txt	all/ip			scram-sha-256/md5/reject/trust
+			to read the recjected file
+				$ sudo cat $PGDATA/rejected_users.txt
 		the + preceding the role name ie include all the direct and indirect members.
-		Using files instead of single roles : to be continued
+		the (@), the name is interpreted as a line-separated text file
 Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
 
