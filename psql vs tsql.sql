@@ -100,3 +100,6 @@ select @t1t2 = 'text 1' + ' text 2' --tsql
 --export to csv
 tsql: bcp or sqlcmd or openrowset
 plsql: COPY (q<uery>) TO 'filename.csv' with  (Delimiter '|' , FORMAT CSV, HEADER TRUE,  ESCAPE E'\\');
+
+--create db forumdb2 from existing forumdb
+create database forumdb2 template forumdb;
