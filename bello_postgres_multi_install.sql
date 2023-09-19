@@ -105,6 +105,15 @@ Managing Users and Connections
 				$ sudo cat $PGDATA/rejected_users.txt
 		the + preceding the role name ie include all the direct and indirect members.
 		the (@), the name is interpreted as a line-separated text file
+
+In PostgreSQL, databases are directories.
+
+PostgreSQL has three types of tables:
+	-Temporary tables: Very fast tables, visible only to the user who created them
+		create temp table if not exists temp_users 
+	-Unlogged tables: Very fast tables to be used as support tables common to all users
+	-Logged tables: Regular tables	
+	
 Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
 
