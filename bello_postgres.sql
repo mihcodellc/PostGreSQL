@@ -139,6 +139,10 @@ SHOW logging_collector; --log started? ie ON
 SHOW log_directory; -- where is log
 show all;
 show SERVER_VERSION;
+--find in PG log 
+	--go to log location
+	--find the latest or pattern of latest files ie "202309*"
+	--tail -f XYZ.csv | grep -i "error\|fatal\|warn" 
 
 
 
