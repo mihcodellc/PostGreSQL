@@ -103,3 +103,13 @@ plsql: COPY (q<uery>) TO 'filename.csv' with  (Delimiter '|' , FORMAT CSV, HEADE
 
 --create db forumdb2 from existing forumdb
 create database forumdb2 template forumdb;
+
+
+--kill session
+--PG
+select * from pg_stat_activity where usename='mbello';  -- get PID -- pid = 3343, 12582
+select pg_cancel_backend(3343); --Cancels the current query of the session
+-- pg_terminate_backend: Does not rollback. 
+-- if timeout not specified, returns true whether the process actually terminates or not. 
+-- If the process is terminated, the function returns true.
+select pg_terminate_backend(3343, <timeout bigint DEFAULT 0>); 
