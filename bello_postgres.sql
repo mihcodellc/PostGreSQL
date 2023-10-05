@@ -594,4 +594,5 @@ SELECT tablename, attname, n_distinct, most_common_vals,most_common_freqs,correl
 
 --see the null in interactive mode on postgres
 pset null NULL
+select * from categories order by description NULLS first;
 
