@@ -596,3 +596,12 @@ SELECT tablename, attname, n_distinct, most_common_vals,most_common_freqs,correl
 pset null NULL
 select * from categories order by description NULLS last; -- by default 
 
+
+--CTE postgres specific
+From version 12, we have to insert the MATERIALIZED option 
+	if we want to have our queries display the same behavior that we had with the previous versions.
+with posts_author_1 as materialized 
+ (select p.* from posts p
+ inner join users u on p.author=u.pk
+ where username='scotty')
+select pk,title from posts_author_1;
