@@ -592,5 +592,6 @@ SELECT tablename, attname, n_distinct, most_common_vals,most_common_freqs,correl
           WHERE tablename = 'posts'; --- most_common_freqs * tuples in tables = tuples for a value od a column
 
 
-
+--see the null in interactive mode on postgres
+pset null NULL
 
