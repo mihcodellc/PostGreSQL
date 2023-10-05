@@ -82,6 +82,9 @@ end
 --In an INSERT, the data available to RETURNING is the row as it was inserted.	
 --IN an UPDATE, the data available to RETURNING is the new content of the modified row
 --In a DELETE, the data available to RETURNING is the content of the deleted row
+insert into j_posts_tags values(1,2) returning *;
+delete from t_posts p where exists (select 1 from categories c where c.pk=p.category and c.title='apple') 
+	returning pk,title,category;
 with cte as (
 UPDATE products SET price = price * 1.10
   WHERE price <= 99.99
@@ -122,4 +125,11 @@ select pid, query from pg_stat_activity where usename='mbello';
 --NULL value
 select * from categories order by description NULLS last; -- by default PG
 --TSQL NULL first
+
+
+--tsql Merge
+--plsql UPSERT
+INSERT INTO table_name(column_list) VALUES(value_list) ON CONFLICT target action;
+insert into j_posts_tags values(1,2) ON CONFLICT (tag_pk,post_pk) DO UPDATE set tag_pk=excluded.tag_pk+1;
+UPDATE set tag_pk=tag_pk+1 where tag_pk=1 and post_pk=2
 
