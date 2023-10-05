@@ -48,6 +48,7 @@ SELECT AGE (timestamp '2001-01-01', timestamp '2020-01-01'); -- 19 years
 -- like 
 a.adsrc like '%merchantbatch_id_seq%'; --sql
 a.adsrc ~ 'merchantbatch_id_seq'; -- psql
+a.adsrc ilike 'merchantbatch_id_seq'; --psql case-insensitive
 
 
 --***begin tran and roll it back
@@ -115,3 +116,10 @@ select pg_cancel_backend(3343); --Cancels the current query of the session
 select pg_terminate_backend(3343, <timeout bigint DEFAULT 0>); 
 --rerun to confirm it s gone
 select pid, query from pg_stat_activity where usename='mbello';
+
+
+
+--NULL value
+select * from categories order by description NULLS last; -- by default PG
+--TSQL NULL first
+
