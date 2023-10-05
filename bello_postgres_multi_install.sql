@@ -114,7 +114,7 @@ PostgreSQL has three types of tables:
 	-Unlogged tables: Very fast tables to be used as support tables common to all users
 	-Logged tables: Regular tables	
 
-	next "Managing temporary tables"
+	next "Windows Functions"
 Learn PostgreSQL
 Luca Ferrari, Enrico Pirozzi
 
