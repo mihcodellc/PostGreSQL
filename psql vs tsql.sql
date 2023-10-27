@@ -139,4 +139,13 @@ UPDATE set tag_pk=tag_pk+1 where tag_pk=1 and post_pk=2
 
 -- import : where /tmp/reports/ is 777
 COPY public.mytable FROM '/tmp/reports/Sample.csv' WITH (FORMAT csv);
+-- https://www.postgresql.org/docs/current/sql-copy.html
+--import data
+COPY public.forpg FROM '/tmp/reports/Sample.csv' WITH (FORMAT csv);
+COPY public.forpg FROM '/tmp/reports/valQuery.csv' WITH (FORMAT csv, FORCE_NOT_NULL (documenttype)); -- null are not matched
+COPY public.forpg FROM '/tmp/reports/valQuery.csv' WITH (FORMAT csv);
+--export data
+COPY public.forpg( id, lockboxnumber ) TO '/tmp/reports/valColums.csv' WITH (FORMAT csv);
+COPY (select * from public.forpg limit 1000) TO '/tmp/reports/valQuery.csv' WITH (FORMAT csv);
+COPY (select id, documenttype from public.forpg where documenttype is NULL limit 1000) TO '/tmp/reports/valQuery.csv' WITH (FORMAT csv);
 
