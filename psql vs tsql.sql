@@ -135,3 +135,8 @@ INSERT INTO table_name(column_list) VALUES(value_list) ON CONFLICT target action
 insert into j_posts_tags values(1,2) ON CONFLICT (tag_pk,post_pk) DO UPDATE set tag_pk=excluded.tag_pk+1;
 UPDATE set tag_pk=tag_pk+1 where tag_pk=1 and post_pk=2
 
+
+
+-- import : where /tmp/reports/ is 777
+COPY public.mytable FROM '/tmp/reports/Sample.csv' WITH (FORMAT csv);
+
