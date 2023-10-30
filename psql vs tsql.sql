@@ -103,9 +103,7 @@ select @t1t2 = 'text 1' + ' text 2' --tsql
 
 --IIF in TSQL not in psql, use Case instead
 
---export to csv
-tsql: bcp or sqlcmd or openrowset
-plsql: COPY (q<uery>) TO 'filename.csv' with  (Delimiter '|' , FORMAT CSV, HEADER TRUE,  ESCAPE E'\\');
+
 
 --create db forumdb2 from existing forumdb
 create database forumdb2 template forumdb;
@@ -136,6 +134,9 @@ insert into j_posts_tags values(1,2) ON CONFLICT (tag_pk,post_pk) DO UPDATE set 
 UPDATE set tag_pk=tag_pk+1 where tag_pk=1 and post_pk=2
 
 
+--export to csv
+tsql: bcp or sqlcmd or openrowset
+plsql: COPY (q<uery>) TO 'filename.csv' with  (Delimiter '|' , FORMAT CSV, HEADER TRUE,  ESCAPE E'\\');
 
 -- import : where /tmp/reports/ is 777
 COPY public.mytable FROM '/tmp/reports/Sample.csv' WITH (FORMAT csv);
