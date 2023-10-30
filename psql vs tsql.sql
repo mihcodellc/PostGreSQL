@@ -41,7 +41,7 @@ SELECT
 	INTERVAL '6 years 5 months 4 days 3 hours 2 minutes 1 second';
 
 SELECT EXTRACT (MINUTE FROM INTERVAL '5 hours 21 minutes');
-select col1, Datecol2 from merlin_sla_report_daily 
+select col1, Datecol2 from mytable 
 where EXTRACT(MONTH FROM Datecol2  ) = 9 and EXTRACT(year FROM Datecol2 ) = 2023 order by col1 desc limit 1
 select age(now(),'2022-04-27 12:11:50.029451-05')
 SELECT current_date, AGE (timestamp '2001-10-10');-- age and current date
