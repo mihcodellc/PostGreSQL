@@ -35,7 +35,7 @@ select datediff(MINUTE,'20150101', '20210401')
 select datepart(yy,getdate())
 select datepart(SECOND,getdate())
 
---pgsql
+--pgsql date diff with extract or +/-
 SET intervalstyle = 'postgres';
 SELECT
 	INTERVAL '6 years 5 months 4 days 3 hours 2 minutes 1 second';
@@ -46,6 +46,9 @@ where EXTRACT(MONTH FROM Datecol2  ) = 9 and EXTRACT(year FROM Datecol2 ) = 2023
 select age(now(),'2022-04-27 12:11:50.029451-05')
 SELECT current_date, AGE (timestamp '2001-10-10');-- age and current date
 SELECT AGE (timestamp '2001-01-01', timestamp '2020-01-01'); -- 19 years
+
+select '20230326 07:30:00.000'::timestamp + INTERVAL '90 days' ---return date & time
+select '20230326 07:30:00.000'::date + 90 -- return date
 
 -- like 
 a.adsrc like '%merchantbatch_id_seq%'; --sql
