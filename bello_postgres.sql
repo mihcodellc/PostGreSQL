@@ -607,6 +607,8 @@ with posts_author_1 as materialized
 select pk,title from posts_author_1;
 
 
+--dump a table
+pg_dump -t mytab mydb > db.sql
 --copy/export/create database
 -- export only schemas on the databse -s
 pg_dump -s current_db > /tmp/current_db.sql
