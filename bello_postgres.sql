@@ -605,3 +605,21 @@ with posts_author_1 as materialized
  inner join users u on p.author=u.pk
  where username='scotty')
 select pk,title from posts_author_1;
+
+
+--copy/export/create database
+-- export only schemas on the databse -s
+pg_dump -s current_db > /tmp/current_db.sql
+
+-- connect and create empty database
+ create database new_db with template template0;
+\q
+-- load the script 
+ psql -d new_db -f /tmp/payer_solution.sql
+-- test connection to the new db
+ psql -U postgres -d new_db
+ -- query a table to make sure it exists and is emty 
+ select * from schema.table1 limit 5;
+\q
+--remove the script file 
+  rm -f /tmp/current_db.sql
