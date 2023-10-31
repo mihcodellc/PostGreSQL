@@ -45,7 +45,7 @@ select col1, Datecol2 from mytable
 where EXTRACT(MONTH FROM Datecol2  ) = 9 and EXTRACT(year FROM Datecol2 ) = 2023 order by col1 desc limit 1
 select age(now(),'2022-04-27 12:11:50.029451-05')
 SELECT current_date, AGE (timestamp '2001-10-10');-- age and current date
-SELECT AGE (timestamp '2001-01-01', timestamp '2020-01-01'); -- 19 years
+SELECT AGE (timestamp '2001-01-01', timestamp '2020-10-20'); -- "-19 years -9 mons -19 days"
 
 select '20230326 07:30:00.000'::timestamp + INTERVAL '90 days' ---return date & time
 select '20230326 07:30:00.000'::date + 90 -- return date
