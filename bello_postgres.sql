@@ -612,6 +612,8 @@ pg_dump -t mytab mydb > db.sql
 --copy/export/create database
 -- export only schemas on the databse -s
 pg_dump -s current_db > /tmp/current_db.sql
+-- no privileges, role exported	
+pg_dump --no-acl  -s payer_solution > /tmp/current_db_safe.sql
 
 -- connect and create empty database
  create database new_db with template template0;
