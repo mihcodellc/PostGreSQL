@@ -605,6 +605,7 @@ with posts_author_1 as materialized
  inner join users u on p.author=u.pk
  where username='scotty')
 select pk,title from posts_author_1;
+--recursive CTE
 
 
 --dump a table
