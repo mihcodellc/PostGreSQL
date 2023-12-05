@@ -134,6 +134,7 @@ select * from categories order by description NULLS last; -- by default PG
 --plsql UPSERT
 INSERT INTO table_name(column_list) VALUES(value_list) ON CONFLICT target action;
 insert into j_posts_tags values(1,2) ON CONFLICT (tag_pk,post_pk) DO UPDATE set tag_pk=excluded.tag_pk+1;
+-- It gets replaced with this statement
 UPDATE set tag_pk=tag_pk+1 where tag_pk=1 and post_pk=2
 
 
