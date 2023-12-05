@@ -158,3 +158,8 @@ COPY (select id, documenttype from public.forpg where documenttype is NULL limit
 
 -- generate numeric pg/sql
 select generate_series(1,5);
+
+-- The PostgreSQL NTILE function groups the rows sorted in the partition
+SELECT NTILE(4) OVER(ORDER BY SalesYTD DESC) AS Quartile, CONVERT(NVARCHAR(20),s.SalesYTD,1) AS SalesYTD  
+FROM Sales.SalesPerson AS s
+SELECT x,ntile(2) over w from (select generate_series(1,6) as x) V WINDOW w as (order by x) ;
