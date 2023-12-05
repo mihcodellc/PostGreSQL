@@ -154,3 +154,7 @@ COPY public.forpg( id, lockboxnumber ) TO '/tmp/reports/valColums.csv' WITH (FOR
 COPY (select * from public.forpg limit 1000) TO '/tmp/reports/valQuery.csv' WITH (FORMAT csv);
 COPY (select id, documenttype from public.forpg where documenttype is NULL limit 1000) TO '/tmp/reports/valQuery.csv' WITH (FORMAT csv);
 
+
+
+-- generate numeric pg/sql
+select generate_series(1,5);
