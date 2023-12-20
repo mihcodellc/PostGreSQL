@@ -26,6 +26,27 @@ alter table mytable add col1 int not null constraint df_col1 default 0 --update 
 --alter table payments drop constraint df_col1
 --alter table payments drop column col1	
 
+
+--***reindex
+-- Whenever CREATE INDEX or REINDEX is running, the pg_stat_progress_create_index view will contain one row for each backend 
+	--that is currently creating indexes. 
+tsql : DBCC DBREINDEX ('schema.my_table', my_index, 80); --always offline no online
+       DBCC DBREINDEX ('schema.my_table', ' ', 80); -- all indexes	
+	CREATE INDEX index1 ON table1 (Col1 DESC)   WITH (DROP_EXISTING = ON, fillfactor = 80, ONLINE=ON) WHERE <filter_predicate> ];
+	ALTER INDEX index1 ON table1 REBUILD; -- rebuild or reorganize	ALTER INDEX ALL ON table1 REBUILD;
+	ALTER INDEX test_idx on test_table REBUILD WITH (ONLINE = ON, MAXDOP = 1, RESUMABLE = ON) ; --resumable rebuild
+		ALTER INDEX test_idx on test_table PAUSE ;
+		ALTER INDEX test_idx on test_table RESUME WITH (MAXDOP = 4) ;
+		ALTER INDEX test_idx on test_table ABORT ;
+	--ALTER INDEX test_idx on test_table RESUME WITH (MAXDOP = 2, MAX_DURATION = 240 MINUTES,  WAIT_AT_LOW_PRIORITY (MAX_DURATION = 10, ABORT_AFTER_WAIT = BLOCKERS)) ;
+
+psql : REINDEX INDEX my_index;
+REINDEX TABLE CONCURRENTLY my_table; --CONCURRENTLY online of tsql from v12 of PG
+CREATE INDEX CONCURRENTLY index1 ON my_table (col1) include (col1) WITH (fillfactor = 80) [ WHERE predicate ] ;
+DROP INDEX index1;
+
+
+
 --closest tsql
 select datediff(mm,'20150101', '20210401')
 select datediff(dd,'20150101', '20210401')	
