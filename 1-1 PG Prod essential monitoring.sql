@@ -18,7 +18,9 @@
 --  pgbadger --prefix '%t [%p]: user=%u,db=%d,client=%h'   /var/lib/postgresql/9.3/main/pg_log/postgresql-2023-10-23_*.csv
 
 
-
+--read log
+cd /var/lib/postgresql/9.3/main/pg_log
+grep -i  'error\|fatal\|warn' postgresql-2023-11-03_111725.csv | sort -k 1 | tail -n 1
 
 -- Connection info 
 SELECT usename, count(*) 
