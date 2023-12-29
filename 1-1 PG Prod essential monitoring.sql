@@ -73,7 +73,7 @@ FROM pg_stat_user_indexes
 SELECT relname AS name,
         pg_size_pretty (sum (relpages::BIGINT * 8192)::BIGINT) AS SIZE
    FROM pg_class
-  WHERE reltype = 0
+  WHERE reltype = 0 -- zero for indexes, sequences, and toast tables, which have no pg_type
   GROUP BY relname
   ORDER BY sum(relpages) DESC;
 
