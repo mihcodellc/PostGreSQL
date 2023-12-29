@@ -74,6 +74,7 @@ SELECT relname AS name,
         pg_size_pretty (sum (relpages::BIGINT * 8192)::BIGINT) AS SIZE
    FROM pg_class
   WHERE reltype = 0 -- zero for indexes, sequences, and toast tables, which have no pg_type
+            --can also use pg_class.relkind defined in bello_postgres.sql
   GROUP BY relname
   ORDER BY sum(relpages) DESC;
 
