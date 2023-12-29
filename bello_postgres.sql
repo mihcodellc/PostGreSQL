@@ -81,7 +81,18 @@ DBeaver
 address types: inet, cidr, macaddress
 bit(n) and bit varying(n)
 json types
+domain: is essentially a data type with optional constraints (restrictions on the allowed set of values)
+	Domains are useful for abstracting common constraints on fields into a single location for maintenance
+	all fields of this type requiring the same CHECK constraint to verify 
 
+--https://www.percona.com/blog/unlocking-the-secrets-of-toast-how-to-optimize-large-column-storage-in-postgresql-for-top-performance-and-scalability/#:~:text=TOAST%20tables%20are%20created%20automatically%20by%20PostgreSQL%20when,table%20stores%20a%20reference%20to%20the%20TOAST%20table.
+TOAST is a storage technique used in PostgreSQL to handle large data objects such as images, videos, and audio files. 
+The TOAST technique allows for the efficient storage of large data objects by breaking them into smaller chunks and 
+storing them separately from the main table. This can improve the performance of queries and indexing and 
+reduce the amount of disk space required to store the data.
+
+TOAST tables are created automatically by PostgreSQL when a table contains a column of type OID, bytea, or any other data type with the TOASTable storage class. The TOAST table is then used to store the large data objects, while the main table stores a reference to the TOAST table.	  
+	  
 lower case your statements
  or snake_case
  or quotes object/column "Table" or "Column" from MSSQL
