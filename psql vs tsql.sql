@@ -181,6 +181,20 @@ COPY (select id, documenttype from public.forpg where documenttype is NULL limit
 select generate_series(1,5); -- 1 to 5 numeric
 
 -- The PostgreSQL NTILE function groups the rows sorted in the partition
+-- The parameter passed to the NTILE function determines how many records we want the bucket to be composed of
 SELECT NTILE(4) OVER(ORDER BY SalesYTD DESC) AS Quartile, CONVERT(NVARCHAR(20),s.SalesYTD,1) AS SalesYTD  
 FROM Sales.SalesPerson AS s
 SELECT x,ntile(2) over w from (select generate_series(1,6) as x) V WINDOW w as (order by x) ;
+
+
+--CUME_DIST function computes the fraction / of partition rows that are <= to the current row and its peers.
+-- the function is used to query for the relative position of a value within a set of given values.
+-- the cume_dist function can never have a value greater than the current value of the field.
+select x,cume_dist() over w from (select generate_series(1,5) as x) V WINDOW w as (order by x) ;
+ x | cume_dist 
+---+-----------
+ 1 | 0.2
+ 2 | 0.4
+ 3 | 0.6
+ 4 | 0.8
+ 5 | 1
