@@ -187,9 +187,7 @@ FROM Sales.SalesPerson AS s
 SELECT x,ntile(2) over w from (select generate_series(1,6) as x) V WINDOW w as (order by x) ;
 
 
---CUME_DIST function computes the fraction / of partition rows that are <= to the current row and its peers.
--- the function is used to query for the relative position of a value within a set of given values.
--- the cume_dist function can never have a value greater than the current value of the field.
+--CUME_DIST Returns the cumulative distribution, that is (number of partition rows preceding or peers with current row) / (total partition rows). The value thus ranges from 1/N to 1.
 select x,cume_dist() over w from (select generate_series(1,5) as x) V WINDOW w as (order by x) ;
  x | cume_dist 
 ---+-----------
@@ -198,3 +196,28 @@ select x,cume_dist() over w from (select generate_series(1,5) as x) V WINDOW w a
  3 | 0.6
  4 | 0.8
  5 | 1
+
+
+-- frame clause
+	 --ROWS BETWEEN start_point and end_point
+SELECT x, SUM(x) OVER w
+ FROM (select generate_series(1,5) as x) V
+ WINDOW w AS (ORDER BY x ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW);
+ x | sum 
+---+-----
+ 1 | 1
+ 2 | 3
+ 3 | 6
+ 4 | 10
+ 5 | 15
+	 --RANGE BETWEEN start_point and end_point
+SELECT x, SUM(x) OVER w
+ FROM (select generate_series(1,5) as x) V
+ WINDOW w AS (ORDER BY x RANGE BETWEEN 1 PRECEDING AND CURRENT ROW);
+ x | sum 
+---+-----
+ 1 | 1
+ 2 | 3
+ 3 | 5
+ 4 | 7
+ 5 | 9
