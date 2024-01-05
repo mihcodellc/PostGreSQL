@@ -1,3 +1,9 @@
+-- initially for
+--Unused and rarely used indexes
+-- but i added index def and where clause to see stat on indexes
+
+--PostgreSQL Experts https://github.com/pgexperts/pgx_scripts/blob/master/indexes/unused_indexes.sql
+
 WITH table_scans as (
     SELECT relid,
         tables.idx_scan + tables.seq_scan as all_scans,
