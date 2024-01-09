@@ -70,6 +70,8 @@ SELECT AGE (timestamp '2001-01-01', timestamp '2020-10-20'); -- "-19 years -9 mo
 
 select '20230326 07:30:00.000'::timestamp + INTERVAL '90 days' ---return date & time
 select '20230326 07:30:00.000'::date + 90 -- return date
+select to_date('31/12/2020','dd/mm/yyyy') ; -- know your format
+
 
 -- like 
 a.adsrc like '%merchantbatch_id_seq%'; --sql
