@@ -633,8 +633,13 @@ pg_dump --no-acl  -s payer_solution > /tmp/current_db_safe.sql
 -- connect and create empty database
  create database new_db with template template0;
 \q
--- load the script 
+-- load/run the script 	
  psql -d new_db -f /tmp/payer_solution.sql
+	or
+sqlfile=/tmp/payer_solution.sql
+logfile=/tmp/myapp.log	
+psql prod1  -f $sqlfile     >> $logfile
+	
 -- test connection to the new db
  psql -U postgres -d new_db
  -- query a table to make sure it exists and is emty 
