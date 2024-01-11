@@ -42,6 +42,9 @@ heap-based non clustering,just to reorder once the ROWS and gone
 no queries hints
 maintenance with VACUUM
 Statistics updated with ANALYZE	
+	  ANALYZE VERBOSE 
+	  	When VERBOSE is specified, ANALYZE emits progress messages to indicate which table is currently being processed. 
+	        Various statistics about the tables are printed as well.
 
 non serverless postgres should be tuned fir your workload
 
