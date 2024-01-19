@@ -179,8 +179,11 @@ COPY (select id, documenttype from public.forpg where documenttype is NULL limit
 
 
 
--- generate numeric pg/sql 
+-- generate numeric pg/sql VS tsql 2022
 select generate_series(1,5); -- 1 to 5 numeric
+SELECT DATEADD(minute, s.value, 'Dec 10, 2022 1:00 PM') AS [Interval]
+FROM GENERATE_SERIES(0, 59, 1) AS s;
+-- 
 
 -- The PostgreSQL NTILE function groups the rows sorted in the partition
 -- The parameter passed to the NTILE function determines how many records we want the bucket to be composed of
@@ -189,7 +192,8 @@ FROM Sales.SalesPerson AS s
 SELECT x,ntile(2) over w from (select generate_series(1,6) as x) V WINDOW w as (order by x) ;
 
 
---CUME_DIST Returns the cumulative distribution, that is (number of partition rows preceding or peers with current row) / (total partition rows). The value thus ranges from 1/N to 1.
+--CUME_DIST Returns the cumulative distribution, that is (number of partition rows preceding or peers with current row) / (total partition rows). 
+-- The value thus ranges from 1/N to 1.
 select x,cume_dist() over w from (select generate_series(1,5) as x) V WINDOW w as (order by x) ;
  x | cume_dist 
 ---+-----------
