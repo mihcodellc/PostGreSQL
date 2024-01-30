@@ -39,12 +39,13 @@ tsql : DBCC DBREINDEX ('schema.my_table', my_index, 80); --always offline no onl
 		ALTER INDEX test_idx on test_table RESUME WITH (MAXDOP = 4) ;
 		ALTER INDEX test_idx on test_table ABORT ;
 	--ALTER INDEX test_idx on test_table RESUME WITH (MAXDOP = 2, MAX_DURATION = 240 MINUTES,  WAIT_AT_LOW_PRIORITY (MAX_DURATION = 10, ABORT_AFTER_WAIT = BLOCKERS)) ;
-
+	drop index if exists test_idx on test_table with(ONLINE=ON)
+		
 psql : REINDEX INDEX my_index;
 REINDEX TABLE CONCURRENTLY my_table; --CONCURRENTLY online of tsql from v12 of PG
 CREATE INDEX CONCURRENTLY index1 ON my_table (col1) include (col1) WITH (fillfactor = 80) [ WHERE predicate ] ;
 DROP INDEX index1;
-
+DROP INDEX CONCURRENTLY index1;
 
 
 --closest tsql
