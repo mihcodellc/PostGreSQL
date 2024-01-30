@@ -45,7 +45,7 @@ psql : REINDEX INDEX my_index;
 REINDEX TABLE CONCURRENTLY my_table; --CONCURRENTLY online of tsql from v12 of PG
 CREATE INDEX CONCURRENTLY index1 ON my_table (col1) include (col1) WITH (fillfactor = 80) [ WHERE predicate ] ;
 DROP INDEX index1;
-DROP INDEX CONCURRENTLY index1;
+DROP INDEX CONCURRENTLY if exists index1;
 
 
 --closest tsql
