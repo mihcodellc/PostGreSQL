@@ -105,7 +105,8 @@ Managing Users and Connections
 				$ sudo cat $PGDATA/rejected_users.txt
 		the + preceding the role name ie include all the direct and indirect members.
 		the (@), the name is interpreted as a line-separated text file
-
+		can look up settings by querying: select * from pg_settings
+	
 In PostgreSQL, databases are directories.
 
 PostgreSQL has three types of tables:
