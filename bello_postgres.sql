@@ -151,7 +151,12 @@ pg_ctl start -l logfile
 SELECT  pg_current_logfile(); -- https://stackoverflow.com/questions/67924176/where-are-the-postgres-logs
 SHOW logging_collector; --log started? ie ON
 SHOW log_directory; -- where is log
-show all;
+
+show all; 
+--or 
+select name, setting, short_desc, extra_desc from pg_show_all_settings()
+where name ilike 'hot_standby' or name ilike 'wal%'
+	
 show SERVER_VERSION;
 --find in PG log 
 	--go to log location
