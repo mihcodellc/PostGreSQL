@@ -75,7 +75,9 @@ select to_date('31/12/2020','dd/mm/yyyy') ; -- know your format
 
 
 -- like 
-a.adsrc like '%merchantbatch_id_seq%'; --sql
+a.adsrc like '%merchantbatch_id_seq%'; --psql 
+	vs 
+a.adsrc like '*merchantbatch_id_seq*'; --tsql
 a.adsrc ~ 'merchantbatch_id_seq'; -- psql
 a.adsrc ilike 'merchantbatch_id_seq'; --psql case-insensitive
 
