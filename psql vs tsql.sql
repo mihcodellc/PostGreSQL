@@ -82,6 +82,14 @@ a.adsrc ~ 'merchantbatch_id_seq'; -- psql
 a.adsrc ilike 'merchantbatch_id_seq'; --psql case-insensitive
 
 
+--array comparison -- https://www.postgresql.org/docs/9.3/functions-array.html
+SELECT relname, relacl
+FROM pg_class
+WHERE relacl IS NOT NULL -- To filter only non-null ACLs
+   AND ARRAY['postgres=arwdDxt/postgres']::aclitem[] <@ relacl;
+  -- AND relacl::text ~ 'mbello';
+
+
 --***begin tran and roll it back
 --psql
 begin; --block limit in tsql
