@@ -32,3 +32,12 @@ LEFT JOIN pg_namespace N
 			or (cast(acl.namespace_priv_list as varchar(200)) ~ 'kcrawford') 
 			or (acl.relname = 'domain')
          order by g.rolname
+--**count permissions by role
+-- SELECT g.rolname AS grantee,
+--                 acl.privilege_type AS permission, count(*)
+--          FROM acl
+--          JOIN pg_roles g ON g.oid = acl.grantee
+--          JOIN pg_roles gg ON gg.oid = acl.grantor
+--          --where (g.rolname ~ 'dprober') 
+-- 	group by g.rolname, acl.privilege_type 
+--          order by g.rolname
