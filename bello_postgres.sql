@@ -77,6 +77,7 @@ pg_restore
 
 https://psql-tips.org/psql_tips_all.html
 https://planet.postgresql.org/
+https://github.com/dataegret/pg-utils	  
 DBeaver
 
 
