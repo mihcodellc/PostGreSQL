@@ -457,7 +457,7 @@ host all luca 127.0.0.1/32 trust
 --execute statements' file.SQL
 \i test.sql
 
--- roles "UserPermission_DB_Server_PG"
+-- roles "UserPermission_DB_Server_PG" & find a table
 /* inspecting ACL Access Control Lists  with function aclexplode on an object here domain */
 WITH acl AS (
              SELECT relname,relacl,reltuples,
@@ -481,7 +481,7 @@ WITH acl AS (
 LEFT JOIN pg_namespace N
 	ON (N.oid = C.relnamespace) 
 )
-         SELECT acl.relname, g.rolname AS grantee,
+         SELECT CURRENT_CATALOG,schema_name, acl.relname, g.rolname AS grantee,
                 acl.privilege_type AS permission,
                 gg.rolname AS grantor, acl.relacl, acl.reltuples, acl.Type
          FROM acl
