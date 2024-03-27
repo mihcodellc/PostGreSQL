@@ -256,6 +256,8 @@ select count(*) from public.matable;
 --	- pg_catalog (PostGreSQL database as Databases are called “catalogs” in the SQL standard)
 --	- PgAgent
 -- pg_catalog has every function, views possible from PG = MS SQL Server db > programmability > function, views
+-- search functions: 
+	select obj_description(oid), * from pg_proc where proname ilike '%acldefault%'
 --**databases in the cluster
 select * from pg_database;
 --**schemas in a database
@@ -492,8 +494,8 @@ LEFT JOIN pg_namespace N
 			or (acl.relname = 'domain')
          order by g.rolname
 
-	--owners of tables, proc/functions
-	select distinct a.rolname, rolcanlogin,  rolsuper, rolcatupdate/*, relacl*/ from pg_authid a
+--owners of tables, proc/functions
+select distinct a.rolname, rolcanlogin,  rolsuper, rolcatupdate/*, relacl*/ from pg_authid a
  join pg_class c on a.oid = c.relowner 
 
 
@@ -509,12 +511,25 @@ join pg_authid g on g.oid = m.grantor
 order by  a.rolname
 
 --role with members by members
-select u.rolname ismemberOfroleGroup, a.rolname roleGroup, u.rolcanlogin, u.rolsuper, u.rolcatupdate, g.rolname as grantor  
+select u.rolname ismemberOfroleGroup, a.rolname roleGroup,
+       shobj_description(u.oid, 'pg_authid') itsComment, obj_description(u.oid) as otherDesc, g.rolname as grantor,
+       shobj_description(g.oid, 'pg_authid') Grantor_Desc, u.rolcanlogin, u.rolsuper, u.rolcreaterole, u.rolcreatedb
 from pg_auth_members m
 join pg_authid a on a.oid = m.roleid
 join pg_authid u on u.oid = m.member
 join pg_authid g on g.oid = m.grantor
+--where u.rolname = 'dprober'::name
 order by  ismemberOfroleGroup, roleGroup
+
+	--SELECT  g.rolname AS grantee, shobj_description(g.oid, 'pg_authid') itsComment, obj_description(g.oid) as otherDesc,
+        --        --(select rolname from pg_roles r where r.oid = m.roleid limit 1) as memberOfRole,
+        --        gr.rolname as grp_name ,
+        --       g.rolcanlogin, g.rolsuper,g.rolcreaterole, g.rolcreatedb
+        -- FROM pg_roles g
+        -- LEFT JOIN pg_auth_members m ON m.member = g.oid
+        --left join pg_roles gr on gr.oid = m.roleid
+        -- where g.rolname = 'dprober'::name
+	
 
 --role without members  
 select a.rolname roleGroup, a.rolcanlogin, a.rolsuper, a.rolcatupdate, ''  ismemberOfroleGroup
@@ -543,7 +558,7 @@ select * from information_schema.views where table_name not like 'pg_%'; --inclu
 		  WHERE  r.rolname = 'mbello'	   
           ORDER BY r.rolname;
 		  
-	execute as login 	  . set role to mbello
+execute as login 	  . set role to mbello
 -- Drop user or role 
 1. from terminal,connect
 2. drop user mbello;
