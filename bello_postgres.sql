@@ -393,7 +393,7 @@ each connection can have
 	one active transaction at a time and 
 	one fully active statement at any time.
 	
-	SELECT current_(), ;
+	SELECT "current_user"(), current_database(), "current_schema"(), current_query() ;
 	SELECT inet_server_addr(), inet_server_port();
 	SELECT version();
 	select current_user, session_user, current_role;
