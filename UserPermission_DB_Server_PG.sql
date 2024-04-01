@@ -16,21 +16,23 @@ WITH acl AS (
 			    when 'p' then 'partitioned table'
 			    when 'i' then 'index'
 			    when 'I' then 'partitioned index'
-		    else relkind
-		    END as Type, n.nspname as  schema_name, n.nspacl as namespace_priv_list
+		    else cast(C.relkind as char(1)) -- 'o' refers to other
+		    END as Type, n.nspname as  schema_name, n.nspacl as namespace_priv_list, C.relowner, C.relkind
             FROM pg_class C
 LEFT JOIN pg_namespace N
 	ON (N.oid = C.relnamespace) 
 )
          SELECT CURRENT_CATALOG,schema_name, acl.relname, g.rolname AS grantee,
                 acl.privilege_type AS permission,
-                gg.rolname AS grantor, acl.relacl, acl.reltuples, acl.Type
+                gg.rolname AS grantor, acl.relacl, acl.reltuples, acl.Type, o.rolname
          FROM acl
          JOIN pg_roles g ON g.oid = acl.grantee
          JOIN pg_roles gg ON gg.oid = acl.grantor
+	 JOIN pg_roles o on acl.relowner = o.oid
          where (acl.privilege_type = 'USAGE' and acl.schema_name = 'dbo') 
 			or (cast(acl.namespace_priv_list as varchar(200)) ~ 'mbello') 
 			or (acl.relname = 'domain')
+	-- and acl.relkind::char(1) = 'v'
          order by g.rolname
 --**count permissions by role	
 -- SELECT g.rolname AS grantee,
