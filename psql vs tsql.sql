@@ -189,6 +189,17 @@ COPY (select * from public.forpg limit 1000) TO '/tmp/reports/valQuery.csv' WITH
 COPY (select id, documenttype from public.forpg where documenttype is NULL limit 1000) TO '/tmp/reports/valQuery.csv' WITH (FORMAT csv);
 
 
+-- run a .sql file: use a login  with enough priv to execute the query. 
+--	eg postgres account: 1. create the bash file, make executable with chmod then use crontab to run it under the same login
+-- load/run the script 	
+ psql -d new_db -f /tmp/payer_solution.sql
+	or
+sqlfile=/tmp/payer_solution.sql
+logfile=/tmp/myapp.log	
+psql prod1  -f $sqlfile     >> $logfile
+	
+psql prod1 -f $sqlfile  -o $outfile
+
 
 -- generate numeric pg/sql VS tsql 2022
 select generate_series(1,5); -- 1 to 5 numeric
