@@ -102,6 +102,16 @@ begin
    --statement
 end  
 $$; --; can be just after end
+DO $$ -- with paramter in and out
+DECLARE
+    sql_query TEXT;
+    result INT[]:='{2023}';
+    outin INT;
+BEGIN
+    sql_query := 'SELECT count(*) FROM mytable WHERE id  = ANY($1) order by 1';
+    EXECUTE sql_query USING result INTO outin;
+    RAISE NOTICE 'Result: %', outin;
+END $$;
 
 --tsql
 begin tran
