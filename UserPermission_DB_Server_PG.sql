@@ -1,3 +1,5 @@
+--details on permissions on each object https://www.postgresql.org/docs/current/ddl-priv.html
+
 -- roles "UserPermission_DB_Server_PG" 
 /* inspecting ACL Access Control Lists  with function aclexplode on an object here domain */
 WITH acl AS (
