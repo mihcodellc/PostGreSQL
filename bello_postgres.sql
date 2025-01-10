@@ -57,7 +57,7 @@ config to review frequently postgresql.conf
 extensions added per-database but has to be add to the server first or add to model
 	--select * from pg_available_extensions order by name
 	--create(install) extension a_name/alter extension a_name UPDATE/drop extension a_name
-	pg_stat_statements(stats of SQL statements) -- be on the right db to run it
+	pg_stat_statements(stats of SQL statements) -- be on the right db and schema to run it
 	pgagent(job scheduler)
 	HypoPG(Hypothetical Index)
 	pgrowlocks(row-level locking information)
