@@ -57,7 +57,7 @@ config to review frequently postgresql.conf
 extensions added per-database but has to be add to the server first or add to model
 	--select * from pg_available_extensions order by name
 	--create(install) extension a_name/alter extension a_name UPDATE/drop extension a_name
-	pg_stat_statements(stats of SQL statements)
+	pg_stat_statements(stats of SQL statements) -- be on the right db to run it
 	pgagent(job scheduler)
 	HypoPG(Hypothetical Index)
 	pgrowlocks(row-level locking information)
@@ -133,8 +133,32 @@ $$ --required or $aText$
 
 
 *************ADMIN - monitoring
+	pganalyze.com ***  Percona Monitoring and Management (PMM) 
 pgBadger is a PostgreSQL performance analyzer, built for speed with fully detailed reports based on your PostgreSQL log files.
 	you can post the log files for visual at https://www.slowquerylog.com/analyzer
+	log level is set in postgresql.conf  and value from the following  
+	select
+  name as "Parameter",
+  case when setting in ('-1', '0', 'off', 'on') then setting else
+    case unit
+      when '8kB' then pg_size_pretty(setting::int8 * 8 * 1024)
+      when '16MB' then pg_size_pretty(setting::int8 * 16 * 1024 * 1024)
+      when 'kB' then pg_size_pretty(setting::int8 * 1024)
+      else setting || coalesce ('', ' ' || unit)
+    end
+  end as "Value",
+  case when boot_val in ('-1', '0', 'off', 'on') then boot_val else
+    case unit
+      when '8kB' then pg_size_pretty(boot_val::int8 * 8 * 1024)
+      when '16MB' then pg_size_pretty(boot_val::int8 * 16 * 1024 * 1024)
+      when 'kB' then pg_size_pretty(boot_val::int8 * 1024)
+      else boot_val || coalesce ('', ' ' || unit)
+    end
+  end as "Default",
+  category as "Category"
+from pg_settings
+where name ilike '%log_min_duration_statement%';
+
 Ubuntu/debian
 pg_lsclusters # show information about all PostgreSQL clusters ---affiche repertoire du log
 	pgrep -a post # version looking at the postmaster process
