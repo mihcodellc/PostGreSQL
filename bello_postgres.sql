@@ -134,6 +134,7 @@ $$ --required or $aText$
 
 *************ADMIN - monitoring
 pgBadger is a PostgreSQL performance analyzer, built for speed with fully detailed reports based on your PostgreSQL log files.
+	you can post the log files for visual at https://www.slowquerylog.com/analyzer
 Ubuntu/debian
 pg_lsclusters # show information about all PostgreSQL clusters ---affiche repertoire du log
 	pgrep -a post # version looking at the postmaster process
@@ -213,6 +214,7 @@ sudo tail -f /postgres/12/log/postgresql.log
 postgresql-date_time.csv -- query are found here. use grep to search 
 postgresql-date_time.log 
 
+Visualize your slow query log using https://www.slowquerylog.com/analyzer --PG and MySQL 
 
 --describe table EXPLAIN ie no output rows
 EXPLAIN ANALYZE select * from information_schema.columns
