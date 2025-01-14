@@ -137,6 +137,8 @@ $$ --required or $aText$
 pgBadger is a PostgreSQL performance analyzer, built for speed with fully detailed reports based on your PostgreSQL log files.
 	you can post the log files for visual at https://www.slowquerylog.com/analyzer
 	log level is set in postgresql.conf  and value from the following  
+	SHOW config_file; 
+or
 	select
   name as "Parameter",
   case when setting in ('-1', '0', 'off', 'on') then setting else
