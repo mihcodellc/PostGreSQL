@@ -11,7 +11,7 @@ go
 select * from TABLE
 
 --pgsql
-EXPLAIN select * from TABLE
+EXPLAIN analyze select * from TABLE
 
 --data type 
 datetime/datetime2 (tsq) => timestamp(psql) with time zone => datetimeoffset (tsql) 
