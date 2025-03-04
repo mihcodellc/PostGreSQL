@@ -7,6 +7,14 @@ PORT="5432"
 USERNAME="your_username"
 PASSWORD="your_password" # attention if contains special kraters, then enclose with single quote eg. PASSWORD="Monkt@rM\$2022" or Escape Special Characters.eg. PASSWORD="Monkt@rM\$2022"
 
+##if prefer to run .sql and schedule with crontab
+PGPASSWORD=$PASSWORD psql -h $HOST -p $PORT -U $USERNAME -w -d $DB -f /var/lib/postgresql/scripts/db_test.sql
+
+# crontab -e 
+######  use  13:55 March 4th 2025
+# 55 13 4 3 2 /bin/bash /var/lib/postgresql/scripts/db_run_sql.sh > db_run_sql.log 2>&1
+
+
 # Get the list of databases
 DATABASES=$(PGPASSWORD=$PASSWORD psql -h $HOST -p $PORT -U $USERNAME -w -t -d postgres -c "SELECT datname FROM pg_database WHERE datname NOT IN ('template0', 'template1')")
 
