@@ -5,7 +5,7 @@
 HOST="localhost"
 PORT="5432"
 USERNAME="your_username"
-PASSWORD="your_password"
+PASSWORD="your_password" # attention if contains special kraters, then enclose with single quote eg. PASSWORD="Monkt@rM\$2022" or Escape Special Characters.eg. PASSWORD="Monkt@rM\$2022"
 
 # Get the list of databases
 DATABASES=$(PGPASSWORD=$PASSWORD psql -h $HOST -p $PORT -U $USERNAME -w -t -d postgres -c "SELECT datname FROM pg_database WHERE datname NOT IN ('template0', 'template1')")
