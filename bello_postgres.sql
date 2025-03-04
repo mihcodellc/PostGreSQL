@@ -1,4 +1,6 @@
-﻿ 1986 Postgres or Post-Ingres by Michael Stonebraker to Postgre95 to PostgreSQL
+Release notes: https://www.postgresql.org/docs/release   for each version, what news
+
+1986 Postgres or Post-Ingres by Michael Stonebraker to Postgre95 to PostgreSQL
  4 billion individual databases
  1 billion tables, each containing 32 TB of data
  1,600 columns, each 1 GB in size, with an unlimited number of multi-column (up to 32 columns) indexes.
