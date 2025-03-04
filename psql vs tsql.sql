@@ -43,9 +43,18 @@ tsql : DBCC DBREINDEX ('schema.my_table', my_index, 80); --always offline no onl
 		
 psql : REINDEX INDEX my_index;
 REINDEX TABLE CONCURRENTLY my_table; --CONCURRENTLY online of tsql from v12 of PG
-CREATE INDEX CONCURRENTLY index1 ON my_table (col1) include (col1) WITH (fillfactor = 80) [ WHERE predicate ] ;
+
+SET enable_wal_logging = true; -- force PostgreSQL to log it for replica
+
+CREATE INDEX CONCURRENTLY index1 ON my_table (col1) include (col1) WITH (fillfactor = 80) [ WHERE predicate ] ; ---include not eval
 DROP INDEX index1;
 DROP INDEX CONCURRENTLY if exists index1;
+
+
+-- index build progress on v 9.3 better in later version
+SELECT pid, query, state, now() - pg_stat_activity.query_start AS duration, application_name, usename, datname
+FROM pg_stat_activity
+WHERE query LIKE 'CREATE INDEX%' AND state = 'active';
 
 
 --closest tsql
