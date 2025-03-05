@@ -275,5 +275,6 @@ SELECT x, SUM(x) OVER w
 index hint in tsql but pgsql use 
 	 https://www.postgresql.org/docs/9.3/runtime-config-query.html#RUNTIME-CONFIG-QUERY-ENABLE
 	 https://www.postgresql.org/docs/9.3/indexes-examine.html
+	 https://www.postgresql.org/docs/current/overview.html -- postgres internal
 	 select col from table with(INDEX=index_name, ONLINE=ON)
 SET enable_seqscan = off; --disable sequential scans to force index usage:
