@@ -268,3 +268,12 @@ SELECT x, SUM(x) OVER w
  3 | 5
  4 | 7
  5 | 9
+
+
+
+
+index hint in tsql but pgsql use 
+	 https://www.postgresql.org/docs/9.3/runtime-config-query.html#RUNTIME-CONFIG-QUERY-ENABLE
+	 https://www.postgresql.org/docs/9.3/indexes-examine.html
+	 select col from table with(INDEX=index_name, ONLINE=ON)
+SET enable_seqscan = off; --disable sequential scans to force index usage:
