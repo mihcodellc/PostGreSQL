@@ -1,1 +1,58 @@
+https://dbsguru.com/install-and-configure-barman-for-postgresql/
+https://docs.pgbarman.org/release/3.13.0/user_guide/quickstart.html
 
+ Open Source Tool.
+      2) Remote backup and restore of multiple Servers.
+      3) Backup catalogs.
+      4) Incremental backup is possible.
+      5) You can define retention policies.
+      6) Archiving and compression of Wal files and backup files.
+      7) Support both rsync or postgresql protocols.
+
+Barman supports different backup and WAL archive strategies, two of the most commonly used architectures.
+  *Streaming backups with WAL streaming: uses the Postgres streaming replication protocol for both backups and WAL archiving = backup_method = postgres
+  *Rsync backups with WAL archiving: relies on Rsync and SSH connections for transferring backup and WAL files to your Barman server = backup_method = rsync
+
+install barman
+Set Password for OS Account barman
+Set Password for OS Account postgres
+Create barman role
+configure Passwordless Authentication in Barman Server:
+Configure Passwordless Authentication in PostgreSQL Database Server: 
+
+Configure Global Configuration File in Barman Server:
+Configure Server configuration files in Barman Server: Server configuration files, one for each server to be backed up by Barman
+
+Configure WAL Shipping in PostgreSql Database Server: Edit postgresql.conf and modify archive_command to copy WAL Files in barman server.
+Force Switch WAL in Barman Server
+
+*****************command
+barman list-server
+barman show-server <server name>
+barman check <server name>  OR barman check all
+
+barman show-server all # cmd to see config example for server named "main-db-streaming" deatils about each here https://docs.pgbarman.org/release/3.13.0/user_guide/configuration.html
+	active: True
+  archiver: True  ### enables log file shipping through Postgres
+	backup_method: postgres
+	backup_options: BackupOptions({'concurrent_backup'})
+	basebackup_retry_sleep: 30
+	basebackup_retry_times: 3	
+	check_timeout: 30
+	checkpoint_timeout: 1800
+
+	barman_home: /var/lib/barman
+
+	barman_lock_directory: /var/run/barman
+
+	incoming_wals_directory: /var/lib/barman/main-db-streaming/incoming  ### Copied after completion ie finished generating
+	streaming_wals_directory: /var/lib/barman/main-db-streaming/streaming ### Sent in real-time via streaming replication
+
+	backup_directory: /var/lib/barman/main-db-streaming
+	basebackups_directory: /var/lib/barman/main-db-streaming/base  ### where base backups are stored
+	wals_directory: /var/lib/barman/main-db-streaming/wals  ###  all WAL files related to a specific backup server: archived WALs & streaming WALs
+  errors_directory: /var/lib/barman/main-db-streaming/errors
+
+	last_backup_maximum_age: 7 days (latest backup: 3 days, 3 hours, 29 minutes, 42 seconds )
+	post_archive_script: /var/lib/barman/scripts/post_archive_script.sh
+	post_backup_script: /var/lib/barman/scripts/post_backup_script.sh
