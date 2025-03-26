@@ -677,7 +677,9 @@ select pk,title from posts_author_1;
 pg_dump -t mytab mydb > db.sql
 --copy/export/create database
 -- export only schemas on the databse -s
-pg_dump -s current_db > /tmp/current_db.sql
+pg_dump -s current_db > /tmp/current_db.sql # schema only
+pg_dump -O current_db > /tmp/current_db.sql # data include and because -O  ie --no-owner
+pg_dump --inserts -O current_db > /tmp/current_db.sql # no owner using insert onstead of copy for others rdbms	
 -- no privileges, role exported	
 pg_dump --no-acl  -s payer_solution > /tmp/current_db_safe.sql
 
