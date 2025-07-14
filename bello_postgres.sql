@@ -306,9 +306,41 @@ event_object_catalog, event_object_schema, event_object_table,*
 FROM information_schema.triggers
 
 
-
 -- proc definition
-select pg_catalog.pg_get_functiondef('copy_remit_service_lines'::regproc::oid); 
+select pg_catalog.pg_get_functiondef('queue_item'::regproc::oid);
+SELECT pg_get_viewdef('queue_item'::regclass, true);
+Select table_schema, table_name, columns.column_name, columns.is_nullable, columns.data_type, columns.character_maximum_length
+from information_schema.columns where table_name = 'queue_item'
+order by columns.column_name;
+
+-- constraints
+SELECT
+    conname AS constraint_name,
+    contype AS constraint_type,
+    pg_get_constraintdef(oid) AS definition
+FROM pg_constraint
+WHERE conrelid = 'payments'::regclass;
+
+
+--trigger
+SELECT
+    tgname AS trigger_name,
+    pg_get_triggerdef(oid, true) AS definition
+FROM pg_trigger
+WHERE tgrelid = 'payments'::regclass
+  AND NOT tgisinternal;  -- exclude internal triggers like those for foreign keys
+
+---indexes
+SELECT tablename,
+    indexname AS index_name,
+    indexdef AS index_definition
+FROM
+    pg_indexes
+WHERE
+     schemaname = 'public'   -- e.g., 'public'
+    AND
+    tablename in ('queue_item')
+order by 1;
 
 --Functions
  pg trigger,db object, allows you TO CALL A FUNCTION(define as returns trigger) if an INSERT, UPDATE, DELETE or a TRUNCATE clause happens on a table
