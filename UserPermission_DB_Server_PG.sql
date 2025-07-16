@@ -90,3 +90,277 @@ select a.rolname roleGroup, a.rolcanlogin, a.rolsuper, a.rolcatupdate, ''  ismem
 from pg_authid a
 where not exists (select 1/0 from pg_auth_members m where m.roleid = a.oid)
 order by roleGroup
+
+
+
+--full priv table, schema, db, functions levels
+-- Combined User Permissions View
+WITH acl AS (
+    -- Tables, views, materialized views, foreign tables
+    SELECT
+        c.relname,
+        c.relacl,
+        c.reltuples,
+        (aclexplode(c.relacl)).grantor,
+        (aclexplode(c.relacl)).grantee,
+        (aclexplode(c.relacl)).privilege_type,
+        CASE c.relkind
+            WHEN 'r' THEN 'ordinary table'
+            WHEN 'v' THEN 'view'
+            WHEN 'm' THEN 'materialized view'
+            WHEN 'S' THEN 'sequence'
+            WHEN 'f' THEN 'foreign table'
+            WHEN 'c' THEN 'composite type'
+            WHEN 't' THEN 'TOAST table'
+            WHEN 'p' THEN 'partitioned table'
+            WHEN 'i' THEN 'index'
+            WHEN 'I' THEN 'partitioned index'
+            ELSE cast(c.relkind as char(1))
+        END AS Type,
+        n.nspname AS schema_name,
+        n.nspacl AS namespace_priv_list,
+        c.relowner,
+        c.relkind
+    FROM pg_class c
+    LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE c.relacl IS NOT NULL
+
+    UNION ALL
+
+    -- Schemas
+    SELECT
+        n.nspname AS relname,
+        n.nspacl AS relacl,
+        NULL::bigint AS reltuples,
+        (aclexplode(n.nspacl)).grantor,
+        (aclexplode(n.nspacl)).grantee,
+        (aclexplode(n.nspacl)).privilege_type,
+        'schema' AS Type,
+        n.nspname AS schema_name,
+        n.nspacl AS namespace_priv_list,
+        n.nspowner AS relowner,
+        NULL::"char" AS relkind
+    FROM pg_namespace n
+    WHERE n.nspacl IS NOT NULL
+
+    UNION ALL
+
+    -- Databases
+    SELECT
+        d.datname AS relname,
+        d.datacl AS relacl,
+        NULL::bigint AS reltuples,
+        (aclexplode(d.datacl)).grantor,
+        (aclexplode(d.datacl)).grantee,
+        (aclexplode(d.datacl)).privilege_type,
+        'database' AS Type,
+        NULL::text AS schema_name,
+        NULL::aclitem[] AS namespace_priv_list,
+        d.datdba AS relowner,
+        NULL::"char" AS relkind
+    FROM pg_database d
+    WHERE d.datacl IS NOT NULL
+
+    UNION ALL
+
+    -- Functions
+    SELECT
+        p.proname AS relname,
+        p.proacl AS relacl,
+        NULL::bigint AS reltuples,
+        (aclexplode(p.proacl)).grantor,
+        (aclexplode(p.proacl)).grantee,
+        (aclexplode(p.proacl)).privilege_type,
+        'function' AS Type,
+        n.nspname AS schema_name,
+        NULL::aclitem[] AS namespace_priv_list,
+        p.proowner AS relowner,
+        NULL::"char" AS relkind
+    FROM pg_proc p
+    LEFT JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE p.proacl IS NOT NULL
+)
+SELECT
+    CURRENT_CATALOG,
+    acl.schema_name,
+    acl.relname,
+    g.rolname AS grantee,
+    acl.privilege_type AS permission,
+    gg.rolname AS grantor,
+    acl.relacl,
+    acl.reltuples,
+    acl.Type,
+    o.rolname AS owner,
+    acl.relkind
+FROM acl
+JOIN pg_roles g ON g.oid = acl.grantee
+JOIN pg_roles gg ON gg.oid = acl.grantor
+JOIN pg_roles o ON o.oid = acl.relowner
+--WHERE schema_name = 'public'
+ORDER BY
+    Type, schema_name, relname, grantee, permission;
+
+
+or
+
+
+
+-- User Permissions Across All Levels (PostgreSQL 9.3 compatible)
+WITH acl AS (
+    -- Tables, views, materialized views, sequences, foreign tables
+    SELECT
+        c.relname,
+        c.relacl,
+        c.reltuples,
+        (aclexplode(c.relacl)).grantor,
+        (aclexplode(c.relacl)).grantee,
+        (aclexplode(c.relacl)).privilege_type,
+        CASE c.relkind
+            WHEN 'r' THEN 'ordinary table'
+            WHEN 'v' THEN 'view'
+            WHEN 'm' THEN 'materialized view'
+            WHEN 'S' THEN 'sequence'
+            WHEN 'f' THEN 'foreign table'
+            WHEN 'c' THEN 'composite type'
+            WHEN 't' THEN 'TOAST table'
+            WHEN 'p' THEN 'partitioned table'
+            WHEN 'i' THEN 'index'
+            WHEN 'I' THEN 'partitioned index'
+            ELSE cast(c.relkind as char(1))
+        END AS Type,
+        n.nspname AS schema_name,
+        n.nspacl AS namespace_priv_list,
+        c.relowner,
+        c.relkind
+    FROM pg_class c
+    LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE c.relacl IS NOT NULL
+
+    UNION ALL
+
+    -- Schemas
+    SELECT
+        n.nspname AS relname,
+        n.nspacl AS relacl,
+        NULL::bigint AS reltuples,
+        (aclexplode(n.nspacl)).grantor,
+        (aclexplode(n.nspacl)).grantee,
+        (aclexplode(n.nspacl)).privilege_type,
+        'schema' AS Type,
+        n.nspname AS schema_name,
+        n.nspacl AS namespace_priv_list,
+        n.nspowner AS relowner,
+        NULL::"char" AS relkind
+    FROM pg_namespace n
+    WHERE n.nspacl IS NOT NULL
+
+    UNION ALL
+
+    -- Databases
+    SELECT
+        d.datname AS relname,
+        d.datacl AS relacl,
+        NULL::bigint AS reltuples,
+        (aclexplode(d.datacl)).grantor,
+        (aclexplode(d.datacl)).grantee,
+        (aclexplode(d.datacl)).privilege_type,
+        'database' AS Type,
+        NULL::text AS schema_name,
+        NULL::aclitem[] AS namespace_priv_list,
+        d.datdba AS relowner,
+        NULL::"char" AS relkind
+    FROM pg_database d
+    WHERE d.datacl IS NOT NULL
+
+    UNION ALL
+
+    -- Functions
+    SELECT
+        p.proname AS relname,
+        p.proacl AS relacl,
+        NULL::bigint AS reltuples,
+        (aclexplode(p.proacl)).grantor,
+        (aclexplode(p.proacl)).grantee,
+        (aclexplode(p.proacl)).privilege_type,
+        'function' AS Type,
+        n.nspname AS schema_name,
+        NULL::aclitem[] AS namespace_priv_list,
+        p.proowner AS relowner,
+        NULL::"char" AS relkind
+    FROM pg_proc p
+    LEFT JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE p.proacl IS NOT NULL
+
+    UNION ALL
+
+    -- Tablespaces
+    SELECT
+        t.spcname AS relname,
+        t.spcacl AS relacl,
+        NULL::bigint AS reltuples,
+        (aclexplode(t.spcacl)).grantor,
+        (aclexplode(t.spcacl)).grantee,
+        (aclexplode(t.spcacl)).privilege_type,
+        'tablespace' AS Type,
+        NULL::text AS schema_name,
+        NULL::aclitem[] AS namespace_priv_list,
+        t.spcowner AS relowner,
+        NULL::"char" AS relkind
+    FROM pg_tablespace t
+    WHERE t.spcacl IS NOT NULL
+
+    UNION ALL
+
+    -- Foreign servers
+    SELECT
+        s.srvname AS relname,
+        s.srvacl AS relacl,
+        NULL::bigint AS reltuples,
+        (aclexplode(s.srvacl)).grantor,
+        (aclexplode(s.srvacl)).grantee,
+        (aclexplode(s.srvacl)).privilege_type,
+        'foreign server' AS Type,
+        NULL::text AS schema_name,
+        NULL::aclitem[] AS namespace_priv_list,
+        s.srvowner AS relowner,
+        NULL::"char" AS relkind
+    FROM pg_foreign_server s
+    WHERE s.srvacl IS NOT NULL
+
+    UNION ALL
+
+    -- Procedural languages
+    SELECT
+        l.lanname AS relname,
+        l.lanacl AS relacl,
+        NULL::bigint AS reltuples,
+        (aclexplode(l.lanacl)).grantor,
+        (aclexplode(l.lanacl)).grantee,
+        (aclexplode(l.lanacl)).privilege_type,
+        'language' AS Type,
+        NULL::text AS schema_name,
+        NULL::aclitem[] AS namespace_priv_list,
+        l.lanowner AS relowner,
+        NULL::"char" AS relkind
+    FROM pg_language l
+    WHERE l.lanacl IS NOT NULL
+)
+SELECT
+    CURRENT_CATALOG,
+    acl.schema_name,
+    acl.relname,
+    g.rolname AS grantee,
+    acl.privilege_type AS permission,
+    gg.rolname AS grantor,
+    acl.relacl,
+    acl.reltuples,
+    acl.Type,
+    o.rolname AS owner,
+    acl.relkind
+FROM acl
+JOIN pg_roles g ON g.oid = acl.grantee
+JOIN pg_roles gg ON gg.oid = acl.grantor
+JOIN pg_roles o ON o.oid = acl.relowner
+ORDER BY
+    Type, schema_name, relname, grantee, permission;
+
