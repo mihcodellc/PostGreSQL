@@ -249,6 +249,7 @@ EXPLAIN ANALYZE select * from information_schema.columns
 where table_name = 'accountnumber' limit 1;
 	EXPLAIN = estimate plan
 	EXPLAIN ANALYZE = Actual plan
+		EXPLAIN (ANALYZE, BUFFERS) --preferred
 	EXPLAIN (ANALYZE, BUFFERS, COSTS, FORMAT TEXT) -- TEXT, XML, JSON, or YAML
 	EXPLAIN (COSTS off) -- off/on works for ANALYZE, BUFFERS, TIMING ...
 	 EXPLAIN (ANALYZE, SUMMARY on) SELECT * FROM categories; -- return Planning Time/ Execution Time
