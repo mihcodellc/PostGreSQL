@@ -137,7 +137,7 @@ $$ --required or $aText$
 *************ADMIN - monitoring
 	pganalyze.com ***  Percona Monitoring and Management (PMM) 
 pgBadger is a PostgreSQL performance analyzer, built for speed with fully detailed reports based on your PostgreSQL log files.
-	you can post the log files for visual at https://www.slowquerylog.com/analyzer
+	you can post the log files for visual at https://www.slowquerylog.com/analyzer # --PG and MySQL
 	log level is set in postgresql.conf  and value from the following  
 	SHOW config_file; 
 or
@@ -260,6 +260,7 @@ where table_name = 'accountnumber' limit 1;
 			needs json format
 			explain (analyze, format json, buffers, verbose)
 		https://explain.depesz.com/
+		https://github.com/dalibo/pev2?tab=readme-ov-file or download the file PEV2	
 		
 
 SELECT * FROM pg_class WHERE relname = 'ma_table' -- relation ie class or plsql "\d schema.claim_data" or "\d+ schema.claim_data"
